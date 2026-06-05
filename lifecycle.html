@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Lifecycle Journey Map</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── SHARED THEME VARS ── */
+:root{--bg:#f5f2ee;--surface:#edeae4;--surface2:#e8e4dd;--border:rgba(0,0,0,0.12);--text:#1a1510;--muted:#5a5048;--faint:#b8b0a4}
+:root.dark{--bg:#0f1117;--surface:#181c26;--surface2:#1e2333;--border:rgba(255,255,255,0.07);--text:#e8eaf0;--muted:#6b7280;--faint:#374151}
+
+/* ── SHARED RESET ── */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;font-size:14px;transition:background .25s,color .25s;}
+
+/* ── COMBINED HEADER ── */
+#app-header{
+  padding:0;
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+  flex-shrink:0;
+  z-index:300;
+  transition:background .25s,border-color .25s;
+}
+
+/* VIEW SWITCHER BAR */
+#view-switcher{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  padding:10px 20px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.view-tab{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 28px;
+  font-size:13px;font-weight:600;letter-spacing:-.2px;
+  border:1.5px solid var(--border);
+  background:transparent;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all .2s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;
+  position:relative;
+}
+.view-tab:first-child{border-radius:10px 0 0 10px;border-right:none;}
+.view-tab:last-child{border-radius:0 10px 10px 0;border-left:none;}
+.view-tab .tab-icon{font-size:16px;line-height:1;}
+.view-tab .tab-label{display:flex;flex-direction:column;align-items:flex-start;}
+.view-tab .tab-name{font-size:13px;font-weight:600;line-height:1.2;}
+.view-tab .tab-sub{font-size:9px;font-family:'DM Mono',monospace;font-weight:400;opacity:.7;margin-top:1px;}
+.view-tab.active{
+  background:var(--text);
+  color:var(--bg);
+  border-color:var(--text);
+  transform:scale(1.04);
+  z-index:1;
+  box-shadow:0 4px 16px rgba(0,0,0,.18);
+}
+.view-tab:not(.active):hover{
+  background:rgba(128,128,128,.08);
+  color:var(--text);
+  transform:scale(1.02);
+}
+.view-tab.active .tab-sub{opacity:.6;}
+
+/* Theme toggle in header */
+#sharedThemeToggle{
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  padding:4px 11px;border-radius:14px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);cursor:pointer;
+  font-size:10px;font-family:'DM Mono',monospace;transition:all .2s;white-space:nowrap;
+}
+#sharedThemeToggle:hover{background:rgba(128,128,128,.1);color:var(--text);}
+
+/* ── PANELS ── */
+.view-panel{
+  display:none;
+  flex:1;
+  flex-direction:column;
+  overflow:hidden;
+  min-height:0;
+}
+.view-panel.active{display:flex;}
+
+/* ─────────────────────────────────────────────
+   TIMELINE PANEL CSS
+───────────────────────────────────────────── */
+:root{--bg:#f5f2ee;--surface:#edeae4;--surface2:#e8e4dd;--border:rgba(0,0,0,0.12);--text:#1a1510;--muted:#5a5048;--faint:#b8b0a4}
+:root.dark{--bg:#0f1117;--surface:#181c26;--surface2:#1e2333;--border:rgba(255,255,255,0.07);--text:#e8eaf0;--muted:#6b7280;--faint:#374151}
+.dark .modal{background:#1e2333;border-color:rgba(255,255,255,.12)}
+.dark .modal-section-body{color:#c4c9d4}
+.dark .modal-sms-msg{background:rgba(255,255,255,0.04);color:#c4c9d4}
+.dark .modal-token{background:rgba(255,255,255,0.06)}
+.dark .modal-close:hover{background:rgba(255,255,255,0.08)}
+.dark .leg-btn:hover{background:rgba(255,255,255,0.04)}
+.dark .leg-btn.active{background:rgba(255,255,255,0.05)}
+.dark .radio-btn:hover{background:rgba(255,255,255,0.04)}
+.dark .radio-btn.active{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2)}
+.dark .win-group{background:rgba(255,255,255,0.02)}
+.dark .win-opt:hover{background:rgba(255,255,255,0.05)}
+.dark .zoom-btn:hover{background:rgba(255,255,255,0.08)}
+.dark .view-btn:hover{background:rgba(255,255,255,0.04)}
+.dark .view-btn.active{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2)}
+.dark .vol-btn:hover{background:rgba(255,255,255,0.04)}
+.dark .vol-btn.active{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2)}
+.dark .vol-table td{border-bottom-color:rgba(255,255,255,0.03)}
+.dark .win-group:hover{border-color:rgba(255,255,255,.15);box-shadow:0 2px 10px rgba(0,0,0,.3)}
+#themeToggle{padding:3px 10px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:10px;font-family:'DM Mono',monospace;transition:all .2s;white-space:nowrap}
+#themeToggle:hover{background:rgba(128,128,128,0.1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;font-size:14px;transition:background .25s,color .25s}
+header{padding:8px 20px 6px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:0;z-index:200;flex-shrink:0;transition:background .25s,border-color .25s}
+#panel-timeline header{position:sticky;top:0;z-index:10;}
+h1{font-size:15px;font-weight:600;letter-spacing:-.3px}
+.sub{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:2px}
+.header-top{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.hint{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;padding:3px 9px;border:1px solid var(--border);border-radius:20px;animation:pulse 2.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+.controls{display:flex;flex-direction:column;gap:6px}
+.ctrl-row{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.ctrl-label{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;min-width:100px;flex-shrink:0}
+.leg-btn{display:flex;align-items:center;gap:5px;padding:3px 9px;border-radius:14px;border:1px solid transparent;cursor:pointer;font-size:11px;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .18s;background:transparent;color:var(--muted);user-select:none;white-space:nowrap}
+.leg-btn:hover{background:rgba(0,0,0,0.06)}
+.leg-btn.active{color:var(--text);background:rgba(0,0,0,0.07)}
+.leg-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;opacity:.4;transition:opacity .18s}
+.leg-btn.active .leg-dot{opacity:1}
+.pill{font-size:9px;font-family:'DM Mono',monospace;padding:1px 4px;border-radius:3px;margin-left:2px}
+.pill-ret{background:rgba(192,24,10,.15);color:#c0180a}
+.pill-new{background:rgba(163,32,187,.15);color:#a320bb}
+.pill-upd{background:rgba(160,122,0,.15);color:#a07a00}
+.radio-group{display:flex;gap:3px}
+.radio-btn{padding:3px 10px;border-radius:14px;border:1px solid var(--border);cursor:pointer;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);background:transparent;transition:all .15s;white-space:nowrap}
+.radio-btn:hover{background:rgba(0,0,0,0.05)}
+.radio-btn.active{background:rgba(0,0,0,0.09);color:var(--text);border-color:rgba(0,0,0,0.25)}
+.win-group{display:flex;flex-direction:column;gap:2px;padding:5px 7px;border:1px solid var(--border);border-radius:7px;background:rgba(0,0,0,0.03)}
+.win-label{font-size:9px;font-family:'DM Mono',monospace;font-weight:500;white-space:nowrap}
+.win-opts{display:flex;gap:2px;margin-top:2px}
+.win-opt{padding:1px 6px;border-radius:8px;border:1px solid var(--border);cursor:pointer;font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);background:transparent;transition:all .13s;white-space:nowrap}
+.win-opt:hover{background:rgba(0,0,0,0.07)}
+.win-opt.sel-oc{background:rgba(13,143,95,.15);color:#0d8f5f;border-color:rgba(13,143,95,.3)}
+.win-opt.sel-as{background:rgba(196,90,10,.15);color:#c45a0a;border-color:rgba(196,90,10,.3)}
+.win-opt.sel-both{background:rgba(107,61,224,.15);color:#6b3de0;border-color:rgba(107,61,224,.3)}
+.win-opt.sel-off{background:rgba(192,24,10,.1);color:#c0180a;border-color:rgba(192,24,10,.2)}
+.zoom-controls{display:flex;align-items:center;gap:5px}
+.zoom-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.zoom-btn:hover{background:rgba(0,0,0,0.08)}
+.zoom-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);min-width:34px;text-align:center}
+.canvas-wrap{overflow:scroll;flex:1;cursor:grab;user-select:none;scrollbar-width:thin;scrollbar-color:var(--faint) transparent;padding:12px 0 20px;position:relative;min-height:200px}
+.canvas-wrap::-webkit-scrollbar{height:4px;width:4px}
+.canvas-wrap::-webkit-scrollbar-track{background:transparent}
+.canvas-wrap::-webkit-scrollbar-thumb{background:var(--faint);border-radius:2px}
+.canvas-wrap.grabbing{cursor:grabbing}
+svg{display:block;overflow:visible;transform-origin:top left;transition:transform .2s}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.visible{opacity:1;pointer-events:auto}
+.modal{background:#f0ece6;border:1px solid rgba(0,0,0,.12);border-radius:14px;padding:22px 26px;max-width:500px;width:90%;max-height:82vh;overflow-y:auto;position:relative}
+.modal-journey{font-size:10px;font-family:'DM Mono',monospace;margin-bottom:3px}
+.modal-day{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:5px}
+.modal-title{font-size:17px;font-weight:600;margin-bottom:12px;line-height:1.3}
+.modal-section{margin-bottom:13px}
+.modal-section-label{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.modal-section-body{font-size:13px;color:#4a4540;line-height:1.6}
+.modal-tokens{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.modal-token{font-size:10px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:4px;background:rgba(0,0,0,0.06);color:var(--muted);border:1px solid var(--border)}
+.modal-channels{display:flex;gap:6px;flex-wrap:wrap}
+.modal-ch{font-size:10px;padding:2px 10px;border-radius:20px;font-family:'DM Mono',monospace;font-weight:500}
+.modal-close{position:absolute;top:14px;right:14px;width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.modal-close:hover{background:rgba(0,0,0,0.08);color:var(--text)}
+.modal-ebr{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:4px;background:rgba(29,108,196,.1);color:#1d6cc4;border:1px solid rgba(29,108,196,.2)}
+.modal-optin{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:4px;background:rgba(163,32,187,.1);color:#a320bb;border:1px solid rgba(163,32,187,.2)}
+.modal-sms-msg{background:rgba(0,0,0,0.04);border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:12px;color:#4a4540;line-height:1.6;margin-top:6px;font-family:'DM Mono',monospace}
+footer{padding:8px 24px;border-top:1px solid var(--border);display:flex;gap:12px;font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;flex-wrap:wrap;flex-shrink:0;align-items:center}
+footer strong{color:var(--text);font-weight:500}
+.vol-panel{border-top:1px solid var(--border);background:var(--bg);flex-shrink:0;overflow:hidden;transition:max-height .35s ease;max-height:0}
+.vol-panel.open{max-height:800px}
+.vol-inner{padding:16px 24px 20px}
+.vol-subtitle{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:12px}
+.vol-table{width:100%;border-collapse:collapse}
+.vol-table th{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);text-align:left;padding:5px 10px 8px;border-bottom:1px solid var(--border);white-space:nowrap;font-weight:500}
+.vol-table th.r{text-align:right}
+.vol-table td{padding:6px 10px;border-bottom:1px solid rgba(0,0,0,0.04);font-family:'DM Mono',monospace;font-size:11px;vertical-align:middle}
+.vol-table td.r{text-align:right;font-weight:600}
+.vol-table tr:last-child td{border-bottom:none}
+.vol-table tr.sep td{border-top:1px solid var(--border);padding-top:9px;font-weight:600;font-size:12px}
+.vol-table tr.sep td.r{color:var(--text)}
+.wbadge{display:inline-flex;align-items:center;gap:5px;font-size:10px}
+.wbadge-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.n0{color:#b0a898}.nl{color:#16a34a}.nm{color:#d97706}.nh{color:#dc2626}
+.vol-btn{padding:3px 9px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:10px;font-family:'DM Mono',monospace;transition:all .15s;white-space:nowrap}
+.vol-btn:hover{background:rgba(0,0,0,0.06)}
+.vol-btn.active{background:rgba(0,0,0,0.09);color:var(--text);border-color:rgba(0,0,0,0.25)}
+.view-group{display:flex;gap:3px}
+.view-btn{padding:3px 11px;border-radius:14px;border:1px solid var(--border);cursor:pointer;font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);background:transparent;transition:all .15s;white-space:nowrap}
+.view-btn:hover{background:rgba(0,0,0,0.05)}
+.view-btn.active{background:rgba(0,0,0,0.09);color:var(--text);border-color:rgba(0,0,0,0.25)}
+.svg-above{transition:opacity .25s}
+.svg-below{transition:opacity .25s}
+
+/* Hover animations for SVG touchpoint groups */
+g[data-email-tp]:hover > circle:nth-child(2),
+g[data-sms-tp]:hover > circle:nth-child(2) {
+  filter: brightness(1.12);
+}
+
+/* Button press pop */
+.leg-btn, .radio-btn, .zoom-btn, .view-btn, .vol-btn, .win-opt {
+  transition: all .15s cubic-bezier(.34,1.56,.64,1);
+}
+.leg-btn:active, .radio-btn:active, .zoom-btn:active, .view-btn:active, .vol-btn:active, .win-opt:active {
+  transform: scale(0.93);
+}
+
+/* Journey filter button hover glow */
+.leg-btn[data-journey]:hover .leg-dot {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+/* Zoom controls hover */
+.zoom-btn {
+  transition: background .15s, transform .15s cubic-bezier(.34,1.56,.64,1), box-shadow .15s;
+}
+.zoom-btn:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  transform: translateY(-1px);
+}
+
+/* Window group hover */
+.win-group {
+  transition: border-color .18s, box-shadow .18s;
+}
+.win-group:hover {
+  border-color: rgba(0,0,0,.18);
+  box-shadow: 0 2px 10px rgba(0,0,0,.07);
+}
+
+/* Vol/SMS panel toggle button glow */
+.vol-btn:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
+  transform: translateY(-1px);
+}
+
+/* Header hint pill breathe */
+.hint {
+  transition: color .2s;
+}
+.hint:hover {
+  color: var(--text) !important;
+}
+</style>
+
+<style>
+/* ── FLOW PANEL CSS ── */
+#panel-flow{overflow:hidden;}
+*{box-sizing:border-box;margin:0;padding:0;}
+
+header{padding:10px 18px;border-bottom:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;transition:background .25s;}
+.h-title{font-size:13px;font-weight:600;letter-spacing:-.3px;}
+.h-sub{font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:1px;}
+.h-right{display:flex;gap:6px;align-items:center;}
+.hbtn{padding:3px 10px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:10px;font-family:'DM Mono',monospace;transition:all .15s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;}
+.hbtn:hover{background:rgba(128,128,128,.1);color:var(--text);}
+
+/* VIEWPORT */
+#viewport{flex:1;overflow:auto;position:relative;cursor:grab;user-select:none;}
+#viewport.dragging{cursor:grabbing;}
+#viewport::-webkit-scrollbar{width:8px;height:8px;}
+#viewport::-webkit-scrollbar-thumb{background:var(--faint);border-radius:4px;}
+#viewport::-webkit-scrollbar-track{background:transparent;}
+
+/* SCROLLER — sized to match the scaled world, centers the world inside */
+#scroller{display:flex;justify-content:center;align-items:flex-start;min-height:100%;}
+
+/* WORLD — the actual diagram canvas */
+#world{position:relative;transform-origin:top center;flex-shrink:0;}
+
+/* SVG arrows layer */
+#arrows{position:absolute;top:0;left:0;overflow:visible;pointer-events:none;}
+
+/* TILES */
+.tile{
+  position:absolute;border-radius:10px;background:var(--surface);
+  border:1px solid var(--border);padding:9px 11px;
+  cursor:pointer;box-shadow:var(--shadow);
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s,filter .18s;
+}
+.tile:hover{transform:translateY(-3px) scale(1.03);box-shadow:var(--shadow-h);z-index:20;}
+.tile:active{transform:scale(.97);}
+.t-eye{font-size:8px;font-family:'DM Mono',monospace;font-weight:500;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;opacity:.75;}
+.t-label{font-size:12px;font-weight:600;line-height:1.25;margin-bottom:2px;}
+.t-sub{font-size:10px;color:var(--muted);line-height:1.3;}
+.t-day{font-size:8px;font-family:'DM Mono',monospace;position:absolute;top:7px;right:8px;opacity:.45;}
+.t-chs{display:flex;gap:3px;margin-top:5px;flex-wrap:wrap;}
+.t-ch{font-size:8px;font-family:'DM Mono',monospace;font-weight:500;padding:1px 5px;border-radius:3px;}
+.t-upips{display:flex;gap:2px;margin-top:4px;}
+.t-upip{height:3px;flex:1;border-radius:1px;}
+.t-badge{font-size:7px;font-family:'DM Mono',monospace;font-weight:600;padding:1px 5px;border-radius:3px;display:inline-block;margin-bottom:3px;}
+
+.tile-entry{border-radius:50px;text-align:center;border-width:2px;}
+.tile-decision{border-radius:6px;border-style:dashed;border-width:1.5px;}
+.tile-return{border-radius:50px;text-align:center;border-width:2px;border-style:dashed;}
+.tile-eblast{border-radius:8px;}
+.tile-inspection{border-radius:8px;border-style:dashed;}
+
+/* swimlane bg */
+.lane{position:absolute;border-radius:14px;pointer-events:none;}
+.lane-lbl{position:absolute;font-size:8px;font-family:'DM Mono',monospace;font-weight:600;text-transform:uppercase;letter-spacing:.5px;pointer-events:none;opacity:.5;}
+
+/* zoom controls */
+.zctrl{position:fixed;bottom:16px;right:16px;display:flex;gap:4px;z-index:50;}
+.zbtn{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:all .15s;}
+.zbtn:hover{transform:translateY(-1px);box-shadow:var(--shadow-h);}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;opacity:0;pointer-events:none;transition:opacity .2s;display:flex;align-items:center;justify-content:center;}
+.overlay.on{opacity:1;pointer-events:auto;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px;max-width:500px;width:92%;max-height:86vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.m-bar{height:3px;border-radius:2px;margin-bottom:12px;}
+.m-ew{font-size:9px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.m-title{font-size:17px;font-weight:600;margin-bottom:12px;}
+.m-sec{margin-bottom:12px;}
+.m-lbl{font-size:9px;font-family:'DM Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.m-body{font-size:12px;line-height:1.65;color:var(--muted);}
+.m-toks{display:flex;flex-wrap:wrap;gap:4px;}
+.m-tok{font-size:9px;font-family:'DM Mono',monospace;padding:2px 7px;border-radius:4px;background:rgba(128,128,128,.1);border:1px solid var(--border);}
+.m-chs{display:flex;gap:5px;flex-wrap:wrap;}
+.m-ch{font-size:10px;padding:2px 10px;border-radius:10px;font-family:'DM Mono',monospace;font-weight:500;}
+.sms-lbl{font-size:9px;font-family:'DM Mono',monospace;padding:1px 7px;border-radius:3px;display:inline-block;margin-bottom:4px;}
+.sms-box{background:rgba(128,128,128,.06);border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:10px;font-family:'DM Mono',monospace;line-height:1.6;color:var(--muted);margin-top:4px;}
+.u-bar{display:flex;gap:3px;margin-top:6px;}
+.u-pip{height:4px;flex:1;border-radius:2px;}
+.m-close{position:absolute;top:13px;right:13px;width:26px;height:26px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.m-close:hover{background:rgba(128,128,128,.1);color:var(--text);}
+/* Flow dark mode overrides */
+.dark .m-body{color:#c4c9d4;}
+.dark .sms-box{color:#9ca3af;}
+</style>
+</head>
+<body>
+
+<!-- ── SHARED HEADER ── -->
+<div id="app-header">
+  <div id="view-switcher">
+    <div style="position:absolute;left:18px;top:50%;transform:translateY(-50%);">
+      <div style="font-size:13px;font-weight:600;letter-spacing:-.3px;color:var(--text)">Customer Lifecycle Journey Map</div>
+      <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:1px">Day 0 → 2 years · 8 journeys · email + SMS</div>
+    </div>
+    <button class="view-tab active" id="tab-timeline" onclick="switchView('timeline')">
+      <span class="tab-icon">⟷</span>
+      <span class="tab-label">
+        <span class="tab-name">Timeline View</span>
+        <span class="tab-sub">Day 0 → 2 years · horizontal scroll</span>
+      </span>
+    </button>
+    <button class="view-tab" id="tab-flow" onclick="switchView('flow')">
+      <span class="tab-icon">◈</span>
+      <span class="tab-label">
+        <span class="tab-name">Flow View</span>
+        <span class="tab-sub">Tiles &amp; arrows · process diagram</span>
+      </span>
+    </button>
+    <button id="sharedThemeToggle">☀ Light</button>
+  </div>
+</div>
+
+<!-- ── TIMELINE PANEL ── -->
+<div class="view-panel active" id="panel-timeline">
+<header>
+  <div class="controls">
+    <div class="ctrl-row">
+      <span class="ctrl-label">Channel view</span>
+      <div class="view-group">
+        <button class="view-btn active" id="viewAll">Email + SMS</button>
+        <button class="view-btn" id="viewSMS">SMS only</button>
+        <button class="view-btn" id="viewEmail">Email only</button>
+      </div>
+      <span style="flex:1"></span>
+      <div class="zoom-controls" style="margin-left:8px">
+        <button class="zoom-btn" id="zoomOut">−</button>
+        <span class="zoom-label" id="zoomLabel">100%</span>
+        <button class="zoom-btn" id="zoomIn">+</button>
+        <button class="zoom-btn" id="zoomReset" style="font-size:10px;width:auto;padding:0 7px">Reset</button>
+      </div>
+      <div class="hint" style="margin-left:8px">drag to scroll</div>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-label">Journeys</span>
+      <button class="leg-btn active" id="allJourneysToggle" style="border-color:rgba(0,0,0,.2);margin-right:4px"><div class="leg-dot" style="background:#1a1510"></div>All journeys</button>
+      <span style="font-size:10px;color:var(--faint);margin-right:2px">|</span>
+      <button class="leg-btn active" data-journey="welcome" style="border-color:rgba(29,108,196,.3)"><div class="leg-dot" style="background:#1d6cc4"></div>Welcome</button>
+      <button class="leg-btn active" data-journey="oilremind" style="border-color:rgba(13,143,95,.3)"><div class="leg-dot" style="background:#0d8f5f"></div>Oil change reminder</button>
+      <button class="leg-btn active" data-journey="convertlof" style="border-color:rgba(196,90,10,.3)"><div class="leg-dot" style="background:#c45a0a"></div>Convert LOF</button>
+      <button class="leg-btn active" data-journey="deferred" style="border-color:rgba(160,122,0,.3)"><div class="leg-dot" style="background:#a07a00"></div>Deferred services</button>
+      <button class="leg-btn active" data-journey="lapsed" style="border-color:rgba(192,24,10,.3)"><div class="leg-dot" style="background:#c0180a"></div>Lapsed <span class="pill pill-upd">updating</span></button>
+      <button class="leg-btn active" data-journey="lost" style="border-color:rgba(107,61,224,.3)"><div class="leg-dot" style="background:#6b3de0"></div>Lost customer</button>
+      <button class="leg-btn active" data-journey="inspection" style="border-color:rgba(160,96,0,.3)"><div class="leg-dot" style="background:#a06000"></div>State inspection</button>
+      <button class="leg-btn active" data-journey="newplan" style="border-color:rgba(163,32,187,.4)"><div class="leg-dot" style="background:#a320bb"></div>One and done <span class="pill pill-new">new</span></button>
+    </div>
+    <div class="ctrl-row">
+      <span class="ctrl-label">Eblasts</span>
+      <button class="leg-btn active" id="eblastToggle" style="border-color:rgba(74,85,104,.4)"><div class="leg-dot" style="background:#4a5568"></div>Show all eblasts</button>
+      <span style="font-size:10px;color:var(--muted);margin:0 3px">·</span>
+      <span style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-right:3px">Suppression</span>
+      <div class="radio-group">
+        <button class="radio-btn active" data-suppress="none">None</button>
+        <button class="radio-btn" data-suppress="1week">Same week</button>
+        <button class="radio-btn" data-suppress="2week">2 weeks</button>
+      </div>
+    </div>
+    <div class="ctrl-row" style="align-items:flex-start">
+      <span class="ctrl-label" style="padding-top:7px">Eblast windows</span>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          <div class="win-group" data-window="w1"><span class="win-label" style="color:#1d6cc4">Day 0-7</span><div class="win-opts"><button class="win-opt sel-oc" data-val="oc">OC</button><button class="win-opt" data-val="as">AS</button><button class="win-opt" data-val="both">Both</button><button class="win-opt" data-val="off">Off</button></div></div>
+          <div class="win-group" data-window="w2"><span class="win-label" style="color:#c45a0a">Day 8-75</span><div class="win-opts"><button class="win-opt sel-oc" data-val="oc">OC</button><button class="win-opt" data-val="as">AS</button><button class="win-opt" data-val="both">Both</button><button class="win-opt" data-val="off">Off</button></div></div>
+          <div class="win-group" data-window="w3"><span class="win-label" style="color:#0d8f5f">Day 76-120</span><div class="win-opts"><button class="win-opt sel-oc" data-val="oc">OC</button><button class="win-opt" data-val="as">AS</button><button class="win-opt" data-val="both">Both</button><button class="win-opt" data-val="off">Off</button></div></div>
+          <div class="win-group" data-window="w4"><span class="win-label" style="color:#c0180a">Day 121-180</span><div class="win-opts"><button class="win-opt sel-oc" data-val="oc">OC</button><button class="win-opt" data-val="as">AS</button><button class="win-opt" data-val="both">Both</button><button class="win-opt" data-val="off">Off</button></div></div>
+          <div class="win-group" data-window="w5"><span class="win-label" style="color:#a06000">Day 181-240</span><div class="win-opts"><button class="win-opt sel-oc" data-val="oc">OC</button><button class="win-opt" data-val="as">AS</button><button class="win-opt" data-val="both">Both</button><button class="win-opt" data-val="off">Off</button></div></div>
+          <div class="win-group" data-window="w6"><span class="win-label" style="color:#6b3de0">Day 241-450</span><div class="win-opts"><button class="win-opt sel-oc" data-val="oc">OC</button><button class="win-opt" data-val="as">AS</button><button class="win-opt" data-val="both">Both</button><button class="win-opt" data-val="off">Off</button></div></div>
+          <div class="win-group" data-window="w7"><span class="win-label" style="color:#a07a00">Day 451+</span><div class="win-opts"><button class="win-opt sel-oc" data-val="oc">OC</button><button class="win-opt" data-val="as">AS</button><button class="win-opt" data-val="both">Both</button><button class="win-opt" data-val="off">Off</button></div></div>
+        </div>
+        <div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace"><span style="color:#0d8f5f">OC</span> = oil change · <span style="color:#c45a0a">AS</span> = additional services · <span style="color:#6b3de0">Both</span> · <span style="color:#c0180a">Off</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+<div class="canvas-wrap" id="canvasWrap"><svg id="svg"></svg></div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modalClose">x</button>
+    <div class="modal-journey" id="m-journey"></div>
+    <div class="modal-day" id="m-day"></div>
+    <div class="modal-title" id="m-title"></div>
+    <div class="modal-section" id="m-purpose-wrap">
+      <div class="modal-section-label">Purpose</div>
+      <div class="modal-section-body" id="m-purpose"></div>
+    </div>
+    <div class="modal-section" id="m-urgency-wrap">
+      <div class="modal-section-label">Urgency and personalization arc</div>
+      <div class="modal-section-body" id="m-urgency"></div>
+    </div>
+    <div class="modal-section" id="m-audience-wrap" style="display:none">
+      <div class="modal-section-label">Audience</div>
+      <div class="modal-section-body" id="m-audience"></div>
+    </div>
+    <div class="modal-section" id="m-tokens-wrap" style="display:none">
+      <div class="modal-section-label">Key personalization</div>
+      <div class="modal-tokens" id="m-tokens"></div>
+    </div>
+    <div class="modal-section" id="m-channels-wrap">
+      <div class="modal-section-label">Channels</div>
+      <div class="modal-channels" id="m-channels"></div>
+    </div>
+    <div class="modal-section" id="m-sms-wrap" style="display:none">
+      <div class="modal-section-label">SMS messages</div>
+      <div style="margin-bottom:8px"><span class="modal-optin">Opt-in</span></div>
+      <div class="modal-sms-msg" id="m-sms-optin"></div>
+      <div style="margin:10px 0 6px"><span class="modal-ebr">EBR</span></div>
+      <div class="modal-sms-msg" id="m-sms-ebr"></div>
+    </div>
+    <div class="modal-section" id="m-variants-wrap">
+      <div class="modal-section-label">Path variants</div>
+      <div class="modal-section-body" id="m-variants"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span><strong>8</strong> journeys</span>
+  <span><strong>1</strong> updating</span>
+  <span><strong>1</strong> new plan</span>
+  <span><strong>2</strong> eblast tracks</span>
+  <span><strong>25</strong> SMS touchpoints</span>
+  <button class="vol-btn" id="volToggle">Volume table</button>
+  <button class="vol-btn" id="smsMetricsToggle">SMS metrics</button>
+</footer>
+
+<div class="vol-panel" id="volPanel">
+  <div class="vol-inner">
+    <div class="vol-subtitle">Communication volume per lifecycle window · updates live with active journeys and settings</div>
+    <table class="vol-table">
+      <thead><tr>
+        <th>Lifecycle window</th><th>Days</th>
+        <th class="r">Journey emails</th><th class="r">Journey SMS</th>
+        <th class="r">Standalone SMS</th><th class="r">Eblasts</th><th class="r">Total</th>
+      </tr></thead>
+      <tbody id="volBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="vol-panel" id="smsPanel">
+  <div class="vol-inner">
+    <div class="vol-subtitle">SMS touchpoint metrics · journey vs standalone · by lifecycle stage</div>
+    <table class="vol-table" id="smsSummaryTable">
+      <thead><tr>
+        <th>Lifecycle stage</th><th>Days</th>
+        <th class="r">Journey SMS</th><th class="r">Standalone SMS</th><th class="r">Total SMS</th><th class="r">Cadence</th>
+      </tr></thead>
+      <tbody id="smsBody"></tbody>
+    </table>
+    <div style="margin-top:20px">
+      <table class="vol-table">
+        <thead><tr><th>Key metric</th><th class="r">Value</th></tr></thead>
+        <tbody id="smsMetricsBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+
+const SMS_TOUCHPOINTS = [
+  {day:1,type:'JOURNEY',journey:`Welcome`,purpose:`Confirm visit, request review, opt-in prompt , all customers receive this version as it is transactional by nature`,optin:`Grease Monkey: Hi [First Name]! Thank you for choosing Grease Monkey. Could you take 30 seconds to leave us a review using the following link? [Google Review URL] Text START to receive reminders for your next car maintenance service and exclusive discounts.`,ebr:`ALL CUSTOMERS RECEIVE OPT-IN VERSION , transactional proximity to visit covers EBR requirement.`},
+  {day:3,type:'JOURNEY',journey:`Deferred Services , Urgent tier`,purpose:`Flag high-priority manufacturer-recommended service from visit`,optin:`Grease Monkey: Hi [First Name], at your [date] visit our technician noted [service] is manufacturer recommended for your [Year Make Model]. This one is worth addressing soon , we can take care of it at your next visit. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], at your [date] visit our technician noted [service] is manufacturer recommended for your [Year Make Model]. This item is worth addressing at your next visit. Text START to receive reminders for your next car maintenance service.`},
+  {day:7,type:'JOURNEY',journey:`New plan , Loyalty builder`,purpose:`Vehicle summary, reinforce next due date, begin relationship`,optin:`Grease Monkey: Hi [First Name], here's a quick summary for your [Year Make Model]: [oil type] installed at [mileage] miles on [date]. Next oil change due [date] or [next mileage] miles. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], here's a quick summary for your [Year Make Model]: [oil type] installed at [mileage] miles on [date]. Next oil change due [date] or [next mileage] miles. Text START to receive reminders for your next car maintenance service.`},
+  {day:21,type:'STANDALONE',journey:`Deferred services window`,purpose:`Keep brand present, light vehicle tip, deferred services nudge`,optin:`Grease Monkey: Hi [First Name], a quick tip for your [Year Make Model]: check your tire pressure regularly. Proper inflation helps with fuel economy and tire life. Next service due around [date]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], a quick tip for your [Year Make Model]: check your tire pressure regularly. Proper inflation helps with fuel economy and tire life. Next service due around [date]. Text START to receive reminders for your next car maintenance service.`},
+  {day:35,type:'STANDALONE',journey:`Deferred services window`,purpose:`Deferred services follow-up, midpoint vehicle check-in`,optin:`Grease Monkey: Hi [First Name], keeping up with routine service helps protect your [Year Make Model] long term. Your next recommended oil change is due around [date] or [next mileage] miles , every 90 days or 3,000 miles, whichever comes first. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], keeping up with routine service helps protect your [Year Make Model] long term. Your next recommended oil change is due around [date] or [next mileage] miles , every 90 days or 3,000 miles, whichever comes first. Text START to receive reminders for your next car maintenance service.`},
+  {day:45,type:'JOURNEY',journey:`New plan , Mid OC check-in`,purpose:`Midpoint vehicle check-in, deferred services, next due date`,optin:`Grease Monkey: Hi [First Name], your [Year Make Model] is halfway to its next oil change. [If deferred: [Deferred service] is still manufacturer recommended , we can handle it at your next visit.] Next due around [date] or [next mileage] miles. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] is halfway to its next recommended oil change due around [date] or [next mileage] miles. [If deferred: [Deferred service] is still manufacturer recommended , we can handle it at your next visit.] Text START to receive reminders for your next car maintenance service.`},
+  {day:56,type:'STANDALONE',journey:`Deferred services window`,purpose:`Pre-due-soon warm-up, vehicle health nudge`,optin:`Grease Monkey: Hi [First Name], your [Year Make Model] is coming up on its next service window around [date]. Want to get ahead of it? Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] is coming up on its next service window around [date] or [next mileage] miles. Text START to receive reminders for your next car maintenance service.`},
+  {day:76,type:'JOURNEY',journey:`Oil change reminder , Due soon`,purpose:`Due soon alert, 2 weeks before interval`,optin:`Grease Monkey: Hi [First Name], your [Year Make Model] is almost due for an oil change , coming up on [date] or [next mileage] miles. [Offer.] Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] is almost due for an oil change , coming up on [date] or [next mileage] miles. Visit [Store] to schedule. Text START to receive reminders for your next car maintenance service.`},
+  {day:90,type:'JOURNEY',journey:`Oil change reminder , Due now`,purpose:`Due now, highest intent moment in the journey`,optin:`Grease Monkey: Hi [First Name], your [Year Make Model] is due for an oil change today. Come see us at [Store] and we'll get you in and out quickly. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] is due for an oil change today at [mileage] miles. Visit [Store] to schedule service. Text START to receive reminders for your next car maintenance service.`},
+  {day:105,type:'JOURNEY',journey:`New plan , Pre-overdue warning`,purpose:`Educational , what manufacturer guidelines say happens when oil goes overdue`,optin:`Grease Monkey: Hi [First Name], Your [Year Make Model] is coming up on its recommended oil change interval. Come in soon and we'll take care of it. [Offer.] Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], Your [Year Make Model] is coming up on its recommended oil change interval at approximately [estimated mileage] miles. Text START to receive reminders for your next car maintenance service.`},
+  {day:120,type:'JOURNEY',journey:`Oil change reminder , Past due (repurposed for all customers when new plan active)`,purpose:`First overdue alert, vehicle consequence framing, entry point of urgency arc`,optin:`Grease Monkey: Hi [First Name], your [Year Make Model] is officially past due for an oil change , [days] days and [miles over] miles over the recommended interval. Let's get it taken care of before it affects your engine. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] is officially past due for an oil change , [days] days and [miles over] miles over the recommended interval. Continued use without a change may affect engine performance. Text START to receive reminders for your next car maintenance service.`},
+  {day:135,type:'JOURNEY',journey:`New plan , Urgency builder`,purpose:`Mileage overage front and center, deferred services age, strongest data-driven urgency`,optin:`Grease Monkey: Hi [First Name], the longer oil goes unchanged, the harder your engine works. Your [Year Make Model] is now [miles over] miles overdue. A quick visit now is a lot cheaper than engine trouble later. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], the longer oil goes unchanged, the harder your engine works. Your [Year Make Model] is now [miles over] miles past its recommended interval. Visit [Store] to schedule service. Text START to receive reminders for your next car maintenance service.`},
+  {day:150,type:'JOURNEY',journey:`New plan , Final push`,purpose:`30 days to 180-day window, best offer, vehicle consequences are credible and data-backed`,optin:`Grease Monkey: Hi [First Name], your [Year Make Model] has gone [days] days without a fresh oil change. We're making it easy to come back , [best offer]. This won't last. Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] has gone [days] days without a fresh oil change. At this point engine oil is significantly degraded and your vehicle is approximately [miles over] miles overdue. Visit [Store] soon. Text START to receive reminders for your next car maintenance service.`},
+  {day:165,type:'JOURNEY',journey:`New plan , Last chance`,purpose:`Final touch before 180-day lapsed handoff , shortest, most direct message in the journey`,optin:`Grease Monkey: Hi [First Name], we'd hate to lose you. Your [Year Make Model] is [days] days overdue for service. [Best offer.] Book: [link]. Text START and we'll keep you on track.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] is [days] days past its recommended oil change interval. Text START to receive reminders for your next car maintenance service.`},
+  {day:180,type:'JOURNEY',journey:`Lapsed`,purpose:`Oil change angle: cost of neglect , a small service now beats a costly repair later`,optin:`Grease Monkey: Hi [First Name], skipping an oil change today can mean a much bigger bill down the road. Your [Year Make Model] is overdue , come in and we'll take care of it before it becomes an issue. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] last had service at [Store] on [date]. Delaying an oil change can lead to accelerated engine wear and costly repairs over time. Text START to receive reminders for your next car maintenance service.`},
+  {day:210,type:'JOURNEY',journey:`Lapsed`,purpose:`Informational: what degraded oil actually does to an engine over time`,optin:`Grease Monkey: Hi [First Name], as oil breaks down it stops lubricating your engine properly , metal parts wear against each other and heat builds up. Your [Year Make Model] is overdue. A quick oil change now protects against long-term damage. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], as oil breaks down it loses its ability to lubricate and protect your engine. Your [Year Make Model] is approximately [estimated mileage] miles since its last service on [date]. Text START to receive reminders for your next car maintenance service.`},
+  {day:240,type:'JOURNEY',journey:`Lapsed`,purpose:`Oil change angle: fuel economy and performance`,optin:`Grease Monkey: Hi [First Name], dirty oil makes your engine work harder , which means more fuel burned and less performance. Your [Year Make Model] is overdue. Fresh oil is one of the easiest ways to keep it running efficiently. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], degraded oil increases engine friction, which reduces fuel efficiency over time. Your [Year Make Model] is approximately [estimated mileage] miles since its last oil change on [date]. Text START to receive reminders for your next car maintenance service.`},
+  {day:270,type:'STANDALONE',journey:`Lapsed window`,purpose:`Informational: the real cost of delayed service compared to repair`,optin:`Grease Monkey: Hi [First Name], the average oil change costs a fraction of what engine repairs run. Your [Year Make Model] has been overdue for a while now , the longer it waits, the more it risks. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], routine oil changes are significantly less expensive than the engine repairs that result from skipping them. Your [Year Make Model] has not had a recorded service since [date]. Text START to receive reminders for your next car maintenance service.`},
+  {day:300,type:'STANDALONE',journey:`Lapsed window`,purpose:`Oil change angle: engine protection`,optin:`Grease Monkey: Hi [First Name], fresh oil is your engine's first line of defense against heat and wear. Your [Year Make Model] has been running without it long enough. Let's get it protected. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], engine oil is your vehicle's primary defense against heat and internal wear. Your [Year Make Model] last had service on [date] and is approximately [estimated mileage] miles overdue. Text START to receive reminders for your next car maintenance service.`},
+  {day:330,type:'STANDALONE',journey:`Lapsed window`,purpose:`Informational: how oil type affects how quickly oil degrades`,optin:`Grease Monkey: Hi [First Name], your [Year Make Model] was serviced with [oil type] on [date]. Did you know different oil types degrade at different rates? Regardless of type, yours is well past its recommended interval. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] was serviced with [oil type] on [date]. All oil types degrade over time and lose their protective properties , your vehicle is well past its recommended service interval. Text START to receive reminders for your next car maintenance service.`},
+  {day:365,type:'STANDALONE',journey:`Lapsed window`,purpose:`Oil change angle: resale value and service history`,optin:`Grease Monkey: Hi [First Name], consistent service history adds real value when it comes time to sell or trade your [Year Make Model]. It has been about a year since your last visit , a great time to get back on track. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], consistent service records add value to your vehicle over time. Your [Year Make Model] last had service at [Store] on [date], approximately one year ago. Text START to receive reminders for your next car maintenance service.`},
+  {day:395,type:'STANDALONE',journey:`Lapsed window`,purpose:`Informational: what happens at high mileage without regular oil changes`,optin:`Grease Monkey: Hi [First Name], at high mileage, engines are less forgiving about missed oil changes. Sludge builds up, parts wear faster, and small problems become expensive ones. Your [Year Make Model] deserves better. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], a service reminder for your [Year Make Model]: your last recorded oil change was on [date]. Manufacturer guidelines recommend oil changes every [interval]. Reply START to receive future service reminders.`},
+  {day:425,type:'STANDALONE',journey:`Lapsed window`,purpose:`Oil change angle: peace of mind, relationship warmth, simple and direct`,optin:`Grease Monkey: Hi [First Name], there's real peace of mind in knowing your [Year Make Model] is taken care of. We'd love to see you back at [Store]. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] last had service at [Store] on [date]. We appreciate your business. Text START to receive reminders for your next car maintenance service.`},
+  {day:455,type:'STANDALONE',journey:`Lost window`,purpose:`Oil change angle: still here, simple and warm, month 16`,optin:`Grease Monkey: Hi [First Name], your [Year Make Model] has a home at [Store] whenever you're ready. We'd love to have you back. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], our records show your [Year Make Model] last received service at [Store] on [date]. We appreciate your business. Text START to receive reminders for your next car maintenance service.`},
+  {day:486,type:'STANDALONE',journey:`Lost window`,purpose:`Informational: final contact, cost of long-term neglect, EBR window closing`,optin:`Grease Monkey: Hi [First Name], vehicles that go years between oil changes age faster and cost more to maintain. Your [Year Make Model] is long overdue , we're still here if you'd like to come back. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], extended gaps between oil changes accelerate engine wear over time. Our records show your [Year Make Model] last had service on [date]. This is our final courtesy reminder. Text START to receive reminders for your next car maintenance service.`},
+];
+
+const SVG_NS='http://www.w3.org/2000/svg';
+const BASE_DAY_PX=3.4, EARLY_DAY_PX=12, EARLY_CUTOFF=7, MAX_DAY=730;
+const PAD_L=72, PAD_R=60;
+const TOTAL_W=PAD_L+(EARLY_CUTOFF*EARLY_DAY_PX)+((MAX_DAY-EARLY_CUTOFF)*BASE_DAY_PX)+PAD_R;
+const AXIS_Y=510, SVG_H=760;
+
+function xPos(d){
+  if(d<=EARLY_CUTOFF) return PAD_L+d*EARLY_DAY_PX;
+  return PAD_L+EARLY_CUTOFF*EARLY_DAY_PX+(d-EARLY_CUTOFF)*BASE_DAY_PX;
+}
+
+const JOURNEY_META={
+  welcome:   {label:'Welcome / thank you',  color:'#1d6cc4'},
+  oilremind: {label:'Oil change reminder',   color:'#0d8f5f'},
+  convertlof:{label:'Convert LOF',           color:'#c45a0a'},
+  deferred:  {label:'Deferred services',     color:'#a07a00'},
+  lapsed:    {label:'Lapsed (updating)',      color:'#c0180a'},
+  lost:      {label:'Lost customer',         color:'#6b3de0'},
+  inspection:{label:'State inspection',      color:'#a06000'},
+  newplan:   {label:'One and done',           color:'#a320bb'},
+};
+
+// EMAIL LANES - above axis
+const EMAIL_LANES={
+  lost:      {y:96,  side:'above'},
+  inspection:{y:128, side:'above'},
+  lapsed:    {y:176, side:'above'},
+  oilremind: {y:224, side:'above'},
+  newplan:   {y:272, side:'above'},
+  deferred:  {y:320, side:'above'},
+  convertlof:{y:368, side:'above'},
+  welcome:   {y:416, side:'above'},
+  eblast_oc: {y:458, side:'above'},
+  eblast_as: {y:476, side:'above'},
+};
+
+// SMS LANES - below axis only
+const SMS_LANES={
+  sms_journey:   {y:580, side:'below'},
+  sms_standalone:{y:630, side:'below'},
+};
+
+const JOURNEY_TOUCHPOINTS=[
+  // EMAIL journeys (above)
+  {journey:'welcome',   day:1,   channels:['email','sms'], label:'Welcome',             sub:'Transaction confirmed. Review request. Opt-in prompt.',                      emailOnly:true},
+  {journey:'oilremind', day:76,  channels:['email','sms'], label:'Due soon',             sub:'Coming up on 90-day / 3k mile interval.',                                   emailOnly:true},
+  {journey:'oilremind', day:90,  channels:['email','sms'], label:'Due now',              sub:'Oil change due today.',                                                      emailOnly:true},
+  {journey:'oilremind', day:120, channels:['email','sms'], label:'Past due',             sub:'30 days past due. Repurposed when new plan active.',                         emailOnly:true, isOCR120:true},
+  {journey:'convertlof',day:1,   channels:['email'],       label:'LOF email',            sub:'Replaces welcome for zero-OC customers.',                                    emailOnly:true},
+  {journey:'deferred',  day:3,   channels:['email','sms'], label:'Urgent svcs',          sub:'Manufacturer-recommended urgent service flagged at visit.',                  emailOnly:true},
+  {journey:'deferred',  day:14,  channels:['email'],       label:'Mid-priority svcs',    sub:'Mid-priority manufacturer-recommended services.',                            emailOnly:true},
+  {journey:'deferred',  day:30,  channels:['email'],       label:'Low-priority svcs',    sub:'Low-priority manufacturer-recommended services.',                            emailOnly:true},
+  // NEW PLAN email touchpoints (below, but email channel)
+  {journey:'newplan',   day:7,   channels:['email','sms'], label:'Loyalty builder',      sub:'Click for strategy',                                                        isNew:true},
+  {journey:'newplan',   day:45,  channels:['email','sms'], label:'Mid OC check-in',      sub:'Click for strategy',                                                        isNew:true},
+  {journey:'newplan',   day:105, channels:['email','sms'], label:'Pre-overdue warning',  sub:'Click for strategy',                                                        isNew:true},
+  {journey:'newplan',   day:135, channels:['email','sms'], label:'Urgency builder',      sub:'Click for strategy',                                                        isNew:true},
+  {journey:'newplan',   day:150, channels:['email','sms'], label:'Final push',           sub:'Click for strategy',                                                        isNew:true},
+  {journey:'newplan',   day:165, channels:['email','sms'], label:'Last chance',          sub:'Click for strategy',                                                        isNew:true},
+  // LAPSED / LOST / INSPECTION (below)
+  {journey:'lapsed',    day:180, channels:['email','sms'], label:'We miss you 1',        sub:'Lapsed email + SMS. Handoff now at 180 days.'},
+  {journey:'lapsed',    day:210, channels:['email','sms'], label:'We miss you 2',        sub:'Second lapsed email + SMS being updated.'},
+  {journey:'lapsed',    day:240, channels:['email','sms'], label:'We miss you 3',        sub:'Third lapsed email + SMS being updated.'},
+  {journey:'lost',      day:365, channels:['email'],       label:'Lost re-engage 1',     sub:'12-month outreach.'},
+  {journey:'lost',      day:545, channels:['email'],       label:'Lost re-engage 2',     sub:'18-month outreach.'},
+  {journey:'lost',      day:730, channels:['email'],       label:'Lost re-engage 3',     sub:'24-month final outreach.'},
+  {journey:'inspection',day:330, channels:['email'],       label:'Inspection due',       sub:'Triggered by state inspection due date.'},
+];
+
+const NEWPLAN_STRATEGY={
+  7:{label:'Day 7 - Loyalty builder',why:'The customer just made their first decision to trust you with their vehicle. Day 7 is the window to reinforce that decision before the relationship goes cold. Make them feel known, not marketed to.',urgencyArc:'Urgency: none. Trust-building phase only. No ask, no offer. Personalization depth is high.',tokens:['vehicle year/make/model','oil type','mileage at visit','next due date','deferred services','store location'],channels:['email','sms'],ebr:'EBR safe innately. No offer, pure vehicle information.',optin:'Same as EBR. No offer introduced at this stage.'},
+  45:{label:'Day 45 - Mid OC check-in',why:'Sits at the midpoint between visit one and the due-soon window. No service ask is credible yet but this is the ideal moment to keep the brand present and reinforce vehicle knowledge.',urgencyArc:'Urgency: low. Still relationship-building. Estimated mileage is now meaningful. Deferred services get a second mention. No offer.',tokens:['vehicle year/make/model','estimated current mileage','next due date','deferred services callback','model-specific maintenance context'],channels:['email','sms'],ebr:'EBR safe innately. Vehicle health summary, deferred services if applicable. No offer.',optin:'Same as EBR. No offer yet.'},
+  105:{label:'Day 105 - Pre-overdue warning',why:'Customer is 15 days away from being officially overdue. This touch has a unique job: educational. What actually happens to oil and your engine when you go past the change interval? Helpful, not pushy.',urgencyArc:'Urgency: building. First one and done exclusive touch post-90. Educational angle creates urgency through information rather than pressure. No offer yet.',tokens:['vehicle year/make/model','oil type','days since last visit','estimated current mileage','days until overdue','oil degradation context by type'],channels:['email','sms'],ebr:'Educational framing. What happens to oil type after interval. No offer.',optin:'Same educational framing. No offer at this stage.'},
+  135:{label:'Day 135 - Urgency builder',why:'OC reminder is fully silent. Customer is 45 days overdue. Tone shifts from informative to direct. Deferred services flagged at visit one have been waiting over 4 months.',urgencyArc:'Urgency: high. First touch where urgency is the primary message. Estimated miles over interval is the headline. Offer is reinforced and more prominent than day 120.',tokens:['vehicle year/make/model','estimated miles over interval','days overdue','deferred services age in months','oil type consequence language','offer for opt-in'],channels:['email','sms'],ebr:'Vehicle health alert. Miles over interval front and center. No offer.',optin:'Offer reinforced and more prominent than day 120.'},
+  150:{label:'Day 150 - Final push',why:'30 days left before the 180-day window closes. Most critical conversion moment. Best available offer for opt-in. Vehicle data has been building to this moment.',urgencyArc:'Urgency: very high. Best available offer deployed. 30-day countdown to 180-day window is a credible factual deadline. Every personalization token has compounding weight.',tokens:['vehicle year/make/model','estimated miles over interval','days overdue','days until 180-day mark','best available offer','deferred services months outstanding'],channels:['email','sms'],ebr:'Most direct EBR message. Days and miles overdue, days until 180-day mark.',optin:'Best available offer as headline. 30-day countdown as urgency frame.'},
+  165:{label:'Day 165 - Last chance',why:'Final touch before 180-day handoff to lapsed. Shortest, most direct communication in the entire journey. If this does not convert, the customer exits to the updated lapsed journey.',urgencyArc:'Urgency: maximum. Peak of the escalation arc. Personalization razor-focused. Stripping everything down to the single most compelling data point and the offer. Silence after this is intentional.',tokens:['vehicle year/make/model','estimated miles over interval','days until 180-day handoff','final offer'],channels:['email','sms'],ebr:'Two sentences maximum on SMS. Vehicle and mileage overage only.',optin:'Final offer. Hard deadline. SMS leads. Email supports.'},
+};
+
+const OCR120_STRATEGY={
+  label:'Day 120 - Past due (repurposed for all customers)',
+  why:'When the new one and done plan is active, this touchpoint upgrades from a generic past due reminder to a personalized vehicle-specific overdue alert for ALL customers. One and done customers continue through days 135, 150, and 165. Returning customers receive this enhanced version and stop here.',
+  urgencyArc:'Entry point of the urgency arc. Tone shifts from informational to genuinely concerned. The customer is officially overdue. Sets the stage for escalating urgency in subsequent one and done only touches.',
+  tokens:['vehicle year/make/model','days since last visit','estimated miles over interval','oil type','coupon affinity','returning vs first-time flag'],
+  channels:['email','sms'],
+  audience:'ALL customers when new plan is active. One and done customers continue to day 135+.',
+  ebr:'Vehicle health alert. Days and miles overdue as primary hook. No offer.',
+  optin:'Offer introduced for coupon-affinity customers. Non-coupon: vehicle consequence framing.'
+};
+
+const WINDOWS=[
+  {id:'w1',from:0,   to:7,   label:'Welcome',       color:'rgba(29,108,196,.07)',  lc:'#1d6cc4'},
+  {id:'w2',from:8,   to:75,  label:'Deferred svcs', color:'rgba(196,90,10,.07)',  lc:'#c45a0a'},
+  {id:'w3',from:76,  to:120, label:'OC due',         color:'rgba(13,143,95,.07)',  lc:'#0d8f5f'},
+  {id:'w4',from:121, to:180, label:'Churn risk',     color:'rgba(192,24,10,.07)', lc:'#c0180a'},
+  {id:'w5',from:181, to:240, label:'Lapse risk',     color:'rgba(160,96,0,.07)',  lc:'#a06000'},
+  {id:'w6',from:241, to:450, label:'Lapsed',         color:'rgba(107,61,224,.07)', lc:'#6b3de0'},
+  {id:'w7',from:451, to:730, label:'Lost',           color:'rgba(160,122,0,.07)',  lc:'#a07a00'},
+];
+
+const WINDOW_META=[
+  {id:'w1',from:0,   to:7,   label:'Welcome',       dot:'#1d6cc4'},
+  {id:'w2',from:8,   to:75,  label:'Deferred svcs', dot:'#c45a0a'},
+  {id:'w3',from:76,  to:120, label:'OC due',         dot:'#0d8f5f'},
+  {id:'w4',from:121, to:180, label:'Churn risk',     dot:'#c0180a'},
+  {id:'w5',from:181, to:240, label:'Lapse risk',     dot:'#a06000'},
+  {id:'w6',from:241, to:450, label:'Lapsed',         dot:'#6b3de0'},
+  {id:'w7',from:451, to:730, label:'Lost',           dot:'#a07a00'},
+];
+
+const CH_COLORS={email:'#1d6cc4',sms:'#6b3de0',mms:'#a06000',dm:'#c45a0a'};
+const MAJOR=new Set([0,7,45,90,180,240,365,545,730]);
+const DAY_TICKS=[0,1,3,7,14,30,45,76,90,105,120,135,150,165,180,210,240,270,300,330,365,425,485,545,600,660,730];
+const MILESTONE_HL={180:'#c0180a',240:'#a06000'};
+const ZOOM_STEPS=[0.4,0.6,0.8,1,1.25,1.5,2,2.5,3];
+
+let activeJourneys=new Set(Object.keys(JOURNEY_META));
+let eblastsVisible=true;
+let suppressMode='none';
+let windowTrack={w1:'oc',w2:'oc',w3:'oc',w4:'oc',w5:'oc',w6:'oc',w7:'oc'};
+let currentZoom=1;
+let channelView='all';
+let currentTheme='light';
+let svgEmailGroups={};
+let svgBelowGroups={};
+let svgEblastGroups={oc:{},as:{}};
+let svgSmsTrackGroups={};
+
+function el(tag,attrs,parent){const e=document.createElementNS(SVG_NS,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);if(parent)parent.appendChild(e);return e;}
+function txt(content,attrs,parent){const e=el('text',attrs,parent);e.textContent=content;return e;}
+
+function getActiveDays(){return JOURNEY_TOUCHPOINTS.filter(tp=>activeJourneys.has(tp.journey)).map(tp=>tp.day);}
+
+function isSuppressed(day){
+  if(suppressMode==='none')return false;
+  const activeDays=getActiveDays();
+  if(suppressMode==='1week'){const ew=Math.floor(day/7);return activeDays.some(jd=>Math.floor(jd/7)===ew);}
+  if(suppressMode==='2week'){const ew=Math.floor(day/7);return activeDays.some(jd=>{const jw=Math.floor(jd/7);return jw===ew||jw===ew-1||jw===ew+1;});}
+  return false;
+}
+
+function windowForDay(day){return WINDOWS.find(w=>day>=w.from&&day<=w.to);}
+function trackActiveInWindow(day,track){const w=windowForDay(day);if(!w)return false;const s=windowTrack[w.id];if(s==='off')return false;if(s==='both')return true;return s===track;}
+
+function build(){
+  const svg=document.getElementById('svg');
+  svg.setAttribute('width',TOTAL_W);svg.setAttribute('height',SVG_H);
+  svg.innerHTML='';
+  svgEmailGroups={};svgBelowGroups={};svgEblastGroups={oc:{},as:{}};svgSmsTrackGroups={};
+  const P=PALETTES[currentTheme];
+
+  // Zones
+  WINDOWS.forEach(w=>{
+    el('rect',{x:xPos(w.from),y:30,width:xPos(w.to)-xPos(w.from),height:SVG_H-60,fill:w.color},svg);
+    el('line',{x1:xPos(w.from),y1:30,x2:xPos(w.from),y2:SVG_H-30,stroke:w.lc,'stroke-width':'1','stroke-dasharray':'3 5',opacity:'0.18'},svg);
+    txt(w.label,{x:(xPos(w.from)+xPos(w.to))/2,y:54,'text-anchor':'middle','font-size':'10',fill:w.lc,'font-weight':'600','font-family':'DM Mono, monospace'},svg);
+  });
+
+  // Axis
+  DAY_TICKS.forEach(d=>{
+    const isMaj=MAJOR.has(d);const lx=xPos(d);
+    el('line',{x1:lx,y1:AXIS_Y-(isMaj?10:4),x2:lx,y2:AXIS_Y+(isMaj?10:4),stroke:isMaj?P.axisMajorTick:P.axisMinorTick,'stroke-width':isMaj?'1.5':'1'},svg);
+    if(isMaj){
+      const lbl=d===0?'Day 0':d===730?'2 yr':d===365?'1 yr':d===545?'18 mo':`Day ${d}`;
+      const col=MILESTONE_HL[d]||P.axisLabelDefault;
+      txt(lbl,{x:lx,y:AXIS_Y+22,'text-anchor':'middle','font-size':'11',fill:col,'font-family':'DM Mono, monospace'},svg);
+    } else if(d<=45){
+      txt(`${d}`,{x:lx,y:AXIS_Y+22,'text-anchor':'middle','font-size':'9',fill:P.axisMinorLabel,'font-family':'DM Mono, monospace'},svg);
+    }
+  });
+
+  el('line',{x1:PAD_L-10,y1:AXIS_Y,x2:TOTAL_W-PAD_R+10,y2:AXIS_Y,stroke:P.axisLine,'stroke-width':'2'},svg);
+
+  // Section divider labels
+  txt('JOURNEYS + EBLASTS',{x:PAD_L-8,y:AXIS_Y-280,'text-anchor':'end','font-size':'8','font-weight':'600',fill:P.sectionLabel,'font-family':'DM Mono, monospace'},svg);
+  txt('SMS TRACK',{x:PAD_L-8,y:AXIS_Y+80,'text-anchor':'end','font-size':'8','font-weight':'600',fill:P.sectionLabel,'font-family':'DM Mono, monospace'},svg);
+
+  // Above-axis group wrapper
+  const aboveGroup=el('g',{'class':'above-group'},svg);
+
+  // Eblast lanes (above)
+  [{track:'oc',color:'#0d8f5f',label:'OC eblasts'},{track:'as',color:'#c45a0a',label:'AS eblasts'}].forEach(({track,color,label})=>{
+    const lane=EMAIL_LANES['eblast_'+track];
+    el('line',{x1:PAD_L,y1:lane.y,x2:TOTAL_W-PAD_R,y2:lane.y,stroke:color,'stroke-width':'1','stroke-dasharray':'2 4',opacity:'0.15'},svg);
+    txt(label,{x:PAD_L-6,y:lane.y+4,'text-anchor':'end','font-size':'9',fill:color,opacity:'0.6','font-family':'DM Mono, monospace'},svg);
+    for(let day=7;day<=MAX_DAY;day+=7){
+      const cx=xPos(day-3.5);const cy=lane.y;const R=8;
+      const g=el('g',{cursor:'pointer'},svg);
+      g.dataset.eblastTrack=track;g.dataset.day=day;
+      el('circle',{cx,cy,r:R,fill:P.bubbleFill,stroke:color,'stroke-width':'1'},g);
+      el('circle',{cx,cy,r:R-3,fill:color,opacity:'0.3'},g);
+      el('line',{x1:cx,y1:cy+R+1,x2:cx,y2:AXIS_Y-4,stroke:color,'stroke-width':'0.5',opacity:'0.1'},g);
+      g.addEventListener('mouseenter',e=>showEblastTT(e,day,track,color,label));
+      g.addEventListener('mousemove',moveTT);g.addEventListener('mouseleave',hideTT);
+      g.style.transition='transform .18s cubic-bezier(.34,1.56,.64,1), filter .18s';
+      g.style.transformOrigin=`${cx}px ${cy}px`;
+      g.addEventListener('mouseenter',()=>{g.style.transform='scale(1.25)';g.style.filter=`drop-shadow(0 0 4px ${color}66)`;});
+      g.addEventListener('mouseleave',()=>{g.style.transform='scale(1)';g.style.filter='none';});
+      svgEblastGroups[track][day]=g;
+    }
+  });
+
+  // Email journey lanes (above axis)
+  const emailJourneys=['lost','inspection','lapsed','oilremind','newplan','deferred','convertlof','welcome'];
+  emailJourneys.forEach(jkey=>{
+    const lane=EMAIL_LANES[jkey];const meta=JOURNEY_META[jkey];
+    if(!lane||!meta)return;
+    el('line',{x1:PAD_L,y1:lane.y,x2:TOTAL_W-PAD_R,y2:lane.y,stroke:meta.color,'stroke-width':'1','stroke-dasharray':'3 6',opacity:'0.1'},svg);
+    txt(meta.label.split(' ')[0],{x:PAD_L-6,y:lane.y+4,'text-anchor':'end','font-size':'9',fill:meta.color,opacity:'0.5','font-family':'DM Mono, monospace'},svg);
+  });
+
+  // Below axis journey lanes
+  const belowJourneys=[];
+  belowJourneys.forEach(jkey=>{
+    const lane=EMAIL_LANES[jkey];const meta=JOURNEY_META[jkey];
+    if(!lane||!meta)return;
+    el('line',{x1:PAD_L,y1:lane.y,x2:TOTAL_W-PAD_R,y2:lane.y,stroke:meta.color,'stroke-width':'1','stroke-dasharray':'3 6',opacity:'0.1'},svg);
+    txt(meta.label.split(' ')[0],{x:PAD_L-6,y:lane.y+4,'text-anchor':'end','font-size':'9',fill:meta.color,opacity:'0.5','font-family':'DM Mono, monospace'},svg);
+  });
+
+  // SMS track lane
+  const smsJourneyLane=SMS_LANES['sms_journey'];const smsStandaloneLane=SMS_LANES['sms_standalone'];
+
+
+  // Draw journey touchpoints
+  JOURNEY_TOUCHPOINTS.forEach(tp=>{
+    const meta=JOURNEY_META[tp.journey];
+    const isEmailJourney=emailJourneys.includes(tp.journey);
+    const lane=EMAIL_LANES[tp.journey]||SMS_LANES[tp.journey];
+    if(!lane||!meta)return;
+
+    const newplanOn=activeJourneys.has('newplan');
+    const isOCR120=tp.isOCR120||false;
+    const effectiveColor=(isOCR120&&newplanOn)?'#a320bb':meta.color;
+    const isNew=tp.isNew||false;
+    const isClickable=isNew||(isOCR120&&newplanOn);
+    const color=effectiveColor;
+    const cx=xPos(tp.day);const cy=lane.y;const R=16;
+
+    const g=el('g',{cursor:isClickable?'pointer':'default'},svg);
+    g.dataset.journey=tp.journey;
+    if(isOCR120)g.dataset.ocr120='true';
+    g.dataset.emailTp='true';
+
+    el('line',{x1:cx,y1:lane.side==='above'?cy+R+2:cy-R-2,x2:cx,y2:lane.side==='above'?AXIS_Y-4:AXIS_Y+4,stroke:color,'stroke-width':'1','stroke-dasharray':'2 3',opacity:'0.2'},g);
+    el('circle',{cx,cy,r:R+5,fill:color,opacity:isNew?'0.1':'0.05'},g);
+    el('circle',{cx,cy,r:R,fill:P.bubbleFill,stroke:color,'stroke-width':isNew?'2.5':'1.5','stroke-dasharray':tp.journey==='lapsed'?'5 3':'none'},g);
+    if(isNew||(isOCR120&&newplanOn)){
+      el('circle',{cx,cy,r:R-5,fill:color,opacity:'0.2'},g);
+      txt('✦',{x:cx,y:cy+1,'text-anchor':'middle','dominant-baseline':'central','font-size':'8',fill:color,'font-family':'DM Sans, sans-serif'},g);
+    } else {
+      txt(''+tp.day,{x:cx,y:cy+1,'text-anchor':'middle','dominant-baseline':'central','font-size':tp.day>=100?'8':'9','font-weight':'600',fill:color,'font-family':'DM Mono, monospace'},g);
+    }
+
+    const labOff=lane.side==='above'?-R-8:R+12;
+    const subOff=lane.side==='above'?-R-18:R+22;
+    const dispLabel=(isOCR120&&newplanOn)?'Past due ✦':tp.label;
+    txt(dispLabel,{x:cx,y:cy+labOff,'text-anchor':'middle','font-size':'10','font-weight':'500',fill:(isNew||(isOCR120&&newplanOn))?color:P.tpLabel,'font-family':'DM Sans, sans-serif'},g);
+
+    if(isNew||(isOCR120&&newplanOn)){
+      txt('click for strategy',{x:cx,y:cy+subOff,'text-anchor':'middle','font-size':'8',fill:color,opacity:'0.6','font-family':'DM Mono, monospace'},g);
+    } else {
+      txt(tp.channels.map(c=>c.toUpperCase()).join('+'),{x:cx,y:cy+subOff,'text-anchor':'middle','font-size':'8',fill:color,opacity:'0.6','font-family':'DM Mono, monospace'},g);
+    }
+
+    if(isNew){g.addEventListener('click',()=>openStrategyModal(tp.day,color));}
+    else if(isOCR120){g.addEventListener('click',()=>{if(activeJourneys.has('newplan'))openOCR120Modal();});}
+    else{g.addEventListener('mouseenter',e=>showTT(e,tp,color,meta.label));g.addEventListener('mousemove',moveTT);g.addEventListener('mouseleave',hideTT);}
+
+    // Hover animation: scale up and glow outer ring
+    const outerRing=g.querySelector('circle');
+    g.style.transition='transform .18s cubic-bezier(.34,1.56,.64,1), filter .18s';
+    g.style.transformOrigin=`${cx}px ${cy}px`;
+    g.addEventListener('mouseenter',()=>{g.style.transform='scale(1.18)';g.style.filter=`drop-shadow(0 0 6px ${color}88)`;});
+    g.addEventListener('mouseleave',()=>{g.style.transform='scale(1)';g.style.filter='none';});
+
+    if(!svgEmailGroups[tp.journey])svgEmailGroups[tp.journey]=[];
+    svgEmailGroups[tp.journey].push(g);
+    if(!isEmailJourney){
+      if(!svgBelowGroups[tp.journey])svgBelowGroups[tp.journey]=[];
+      svgBelowGroups[tp.journey].push(g);
+    }
+  });
+
+  // SMS TRACK — split into journey and standalone lanes
+  SMS_TOUCHPOINTS.forEach((tp,i)=>{
+    const cx=xPos(tp.day);
+    const isJourney=tp.type==='JOURNEY';
+    const lane=isJourney?smsJourneyLane:smsStandaloneLane;
+    const cy=lane.y;const R=16;
+
+    // Journey SMS color matches the corresponding journey color
+    let color='#6b3de0';
+    if(isJourney){
+      if(tp.journey.includes('Welcome')) color='#1d6cc4';
+      else if(tp.journey.includes('Deferred')) color='#a07a00';
+      else if(tp.journey.includes('Oil change')||tp.journey.includes('OC')||tp.journey.includes('oil')) color='#0d8f5f';
+      else if(tp.journey.includes('New plan')||tp.journey.includes('Loyalty')||tp.journey.includes('Mid OC')||tp.journey.includes('Pre-overdue')||tp.journey.includes('Urgency')||tp.journey.includes('Final')||tp.journey.includes('Last')||tp.journey.includes('chance')) color='#a320bb';
+      else if(tp.journey.includes('Lapsed')||tp.journey.includes('lapsed')||tp.journey.includes('miss')) color='#c0180a';
+      else if(tp.journey.includes('Lost')||tp.journey.includes('lost')) color='#6b3de0';
+      else if(tp.journey.includes('inspection')||tp.journey.includes('Inspection')) color='#a06000';
+      else color='#6b3de0';
+    }
+
+    const g=el('g',{cursor:'pointer'},svg);
+    g.dataset.smsTP=i;
+
+    el('line',{x1:cx,y1:cy-R-2,x2:cx,y2:AXIS_Y+4,stroke:color,'stroke-width':'1','stroke-dasharray':'2 3',opacity:'0.15'},g);
+    el('circle',{cx,cy,r:R+5,fill:color,opacity:'0.08'},g);
+    el('circle',{cx,cy,r:R,fill:P.bubbleFill,stroke:color,'stroke-width':'1.5'},g);
+    el('circle',{cx,cy,r:R-6,fill:color,opacity:'0.18'},g);
+    txt(''+tp.day,{x:cx,y:cy+1,'text-anchor':'middle','dominant-baseline':'central','font-size':tp.day>=100?'8':'9','font-weight':'600',fill:color,'font-family':'DM Mono, monospace'},g);
+
+    const labelText=tp.journey.length>18?tp.journey.substring(0,17)+'...':tp.journey;
+    txt(labelText,{x:cx,y:cy+R+12,'text-anchor':'middle','font-size':'9','font-weight':'500',fill:P.smsLabel,'font-family':'DM Sans, sans-serif'},g);
+    txt(tp.type==='JOURNEY'?'JOURNEY':'STANDALONE',{x:cx,y:cy+R+22,'text-anchor':'middle','font-size':'8',fill:color,opacity:'0.7','font-family':'DM Mono, monospace'},g);
+
+    g.addEventListener('click',()=>openSMSModal(tp,color));
+    g.addEventListener('mouseenter',e=>{
+      ttEl.innerHTML=`<div style="font-size:9px;color:${color};font-family:'DM Mono',monospace;margin-bottom:3px">${tp.type}</div><div style="font-size:9px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:2px">Day ${tp.day}</div><div style="font-weight:600;font-size:13px;color:${color};margin-bottom:4px">${tp.journey}</div><div style="font-size:11px;color:var(--muted)">${tp.purpose.substring(0,80)}...</div><div style="margin-top:6px;font-size:10px;color:var(--muted)">Click to see full SMS copy</div>`;
+      moveTT(e);ttEl.style.opacity='1';
+      g.style.transform='scale(1.18)';g.style.filter=`drop-shadow(0 0 6px ${color}88)`;
+    });
+    g.addEventListener('mousemove',moveTT);
+    g.addEventListener('mouseleave',()=>{hideTT();g.style.transform='scale(1)';g.style.filter='none';});
+    g.style.transition='transform .18s cubic-bezier(.34,1.56,.64,1), filter .18s';
+    g.style.transformOrigin=`${cx}px ${cy}px`;
+    svgSmsTrackGroups[tp.day+'-'+tp.type+'-'+i]=g;
+  });
+
+  // Lifecycle stage labels at bottom for SMS context
+  const stageLabelY = smsStandaloneLane.y + 44;
+  const stageLabels=[
+    {id:'w1',from:0,   to:7,   label:'Welcome',       lc:'#1d6cc4'},
+    {id:'w2',from:8,   to:75,  label:'Deferred svcs', lc:'#c45a0a'},
+    {id:'w3',from:76,  to:120, label:'OC due',         lc:'#0d8f5f'},
+    {id:'w4',from:121, to:180, label:'Churn risk',     lc:'#c0180a'},
+    {id:'w5',from:181, to:240, label:'Lapse risk',     lc:'#a06000'},
+    {id:'w6',from:241, to:450, label:'Lapsed',         lc:'#6b3de0'},
+    {id:'w7',from:451, to:730, label:'Lost',           lc:'#a07a00'},
+  ];
+  stageLabels.forEach(s=>{
+    const midX=(xPos(s.from)+xPos(s.to))/2;
+    // Stage bracket line
+    el('line',{x1:xPos(s.from)+2,y1:stageLabelY-8,x2:xPos(s.to)-2,y2:stageLabelY-8,stroke:s.lc,'stroke-width':'1',opacity:'0.3'},svg);
+    txt(s.label,{x:midX,y:stageLabelY+6,'text-anchor':'middle','font-size':'10',fill:s.lc,'font-weight':'500','font-family':'DM Mono, monospace'},svg);
+  });
+
+  applyVisibility();
+}
+
+function applyVisibility(){
+  const newplanOn=activeJourneys.has('newplan');
+
+  // Show/hide entire email section vs SMS section based on channel view
+  const showEmail=channelView==='all'||channelView==='email';
+  const showSMSView=channelView==='all'||channelView==='sms';
+
+  // Collapse the unused axis section by updating viewBox
+  applyZoom();
+
+  // Condense eblast rows when SMS only
+  document.querySelectorAll('[data-eblast-row]').forEach(el=>{
+    el.style.opacity=showEmail?'1':'0';
+    el.style.height=showEmail?'auto':'0';
+  });
+
+  // Email journey groups
+  Object.entries(svgEmailGroups).forEach(([j,gs])=>{
+    const vis=activeJourneys.has(j);
+    gs.forEach(g=>{
+      if(g.dataset.ocr120){
+        const nc=newplanOn?'#a320bb':'#0d8f5f';
+        const circles=g.querySelectorAll('circle');const lines=g.querySelectorAll('line');const texts=g.querySelectorAll('text');
+        if(circles[0]){circles[0].setAttribute('fill',nc);circles[0].setAttribute('opacity',newplanOn?'0.1':'0.05');}
+        if(circles[1]){circles[1].setAttribute('stroke',nc);circles[1].setAttribute('stroke-width',newplanOn?'2.5':'1.5');}
+        if(circles[2]){circles[2].setAttribute('fill',nc);circles[2].style.display=newplanOn?'':'none';}
+        if(lines[0]){lines[0].setAttribute('stroke',nc);}
+        texts.forEach(t=>{
+          if(t.textContent==='✦'||t.textContent==='120'){t.setAttribute('fill',nc);if(!newplanOn&&t.textContent==='✦'){t.textContent='120';}if(newplanOn&&t.textContent==='120'){t.textContent='✦';}}
+          if(['Past due','Past due ✦','click for strategy','EMAIL+SMS'].includes(t.textContent)){t.setAttribute('fill',newplanOn?nc:PALETTES[currentTheme].tpLabel);if(t.textContent==='Past due'&&newplanOn){t.textContent='Past due ✦';}if(t.textContent==='Past due ✦'&&!newplanOn){t.textContent='Past due';}if(t.textContent==='click for strategy'&&!newplanOn){t.textContent='EMAIL+SMS';}if(t.textContent==='EMAIL+SMS'&&newplanOn){t.textContent='click for strategy';}}
+        });
+        g.style.cursor=newplanOn?'pointer':'default';
+      }
+      g.style.opacity=(vis&&showEmail)?'1':'0';
+      g.style.pointerEvents=(vis&&showEmail)?'auto':'none';
+      g.style.transition='opacity .2s';
+    });
+  });
+
+  // SMS track visibility
+  Object.values(svgSmsTrackGroups).forEach(g=>{
+    g.style.opacity=showSMSView?'1':'0';
+    g.style.pointerEvents=showSMSView?'auto':'none';
+    g.style.transition='opacity .2s';
+  });
+
+  // Eblasts - hide entirely when SMS only
+  const showEmail2=channelView==='all'||channelView==='email';
+  ['oc','as'].forEach(track=>{
+    const color=track==='oc'?'#0d8f5f':'#c45a0a';
+    Object.entries(svgEblastGroups[track]).forEach(([day,g])=>{
+      const d=parseInt(day);
+      const suppressed=isSuppressed(d);const inWindow=trackActiveInWindow(d,track);
+      const active=eblastsVisible&&!suppressed&&inWindow&&showEmail2;
+      const circles=g.querySelectorAll('circle');const lines=g.querySelectorAll('line');
+      if(circles[0]){circles[0].setAttribute('stroke',suppressed?PALETTES[currentTheme].axisMinorTick:(!inWindow?PALETTES[currentTheme].axisMinorTick:color));circles[0].setAttribute('stroke-dasharray',suppressed?'3 2':'none');}
+      if(circles[1]){circles[1].setAttribute('fill',active?color:PALETTES[currentTheme].sectionLabel);circles[1].setAttribute('opacity',active?'0.4':'0.15');}
+      if(lines[0]){lines[0].setAttribute('stroke',active?color:PALETTES[currentTheme].sectionLabel);}
+      const eblastShow=eblastsVisible&&showEmail2&&(channelView!=='sms');
+      g.style.opacity=eblastShow?(active?'1':(suppressed?'0.25':'0.12')):'0';
+      g.style.pointerEvents=eblastShow?'auto':'none';
+      g.style.transition='opacity .2s';
+    });
+  });
+
+  buildVolumeTable();
+  buildSMSMetrics();
+}
+
+// ── MODALS ──
+function openStrategyModal(day,color){
+  const s=NEWPLAN_STRATEGY[day];if(!s)return;
+  document.getElementById('m-journey').textContent='New one & done plan - one and done customers only';
+  document.getElementById('m-journey').style.color=color;
+  document.getElementById('m-day').textContent='Day '+day;
+  document.getElementById('m-title').textContent=s.label;
+  document.getElementById('m-title').style.color=color;
+  document.getElementById('m-purpose').textContent=s.why;
+  document.getElementById('m-purpose-wrap').style.display='block';
+  document.getElementById('m-urgency').textContent=s.urgencyArc||'';
+  document.getElementById('m-urgency-wrap').style.display=s.urgencyArc?'block':'none';
+  document.getElementById('m-audience-wrap').style.display='none';
+  document.getElementById('m-tokens').innerHTML=s.tokens.map(t=>`<span class="modal-token">[${t}]</span>`).join('');
+  document.getElementById('m-tokens-wrap').style.display='block';
+  document.getElementById('m-channels').innerHTML=s.channels.map(c=>`<span class="modal-ch" style="background:${CH_COLORS[c]||'#888'}22;color:${CH_COLORS[c]||'#888'};border:1px solid ${CH_COLORS[c]||'#888'}44">${c.toUpperCase()}</span>`).join('');
+  document.getElementById('m-sms-wrap').style.display='none';
+  document.getElementById('m-variants').innerHTML=`<span class="modal-ebr">EBR</span> ${s.ebr}<br><br><span class="modal-optin">Opt-in</span> ${s.optin}`;
+  document.getElementById('m-variants-wrap').style.display='block';
+  document.getElementById('modalOverlay').classList.add('visible');
+}
+
+function openOCR120Modal(){
+  const s=OCR120_STRATEGY;const color='#a320bb';
+  document.getElementById('m-journey').textContent='Oil change reminder - repurposed for all customers when new plan is active';
+  document.getElementById('m-journey').style.color=color;
+  document.getElementById('m-day').textContent='Day 120';
+  document.getElementById('m-title').textContent=s.label;
+  document.getElementById('m-title').style.color=color;
+  document.getElementById('m-purpose').textContent=s.why;
+  document.getElementById('m-purpose-wrap').style.display='block';
+  document.getElementById('m-urgency').textContent=s.urgencyArc;
+  document.getElementById('m-urgency-wrap').style.display='block';
+  document.getElementById('m-audience').textContent=s.audience;
+  document.getElementById('m-audience-wrap').style.display='block';
+  document.getElementById('m-tokens').innerHTML=s.tokens.map(t=>`<span class="modal-token">[${t}]</span>`).join('');
+  document.getElementById('m-tokens-wrap').style.display='block';
+  document.getElementById('m-channels').innerHTML=s.channels.map(c=>`<span class="modal-ch" style="background:${CH_COLORS[c]||'#888'}22;color:${CH_COLORS[c]||'#888'};border:1px solid ${CH_COLORS[c]||'#888'}44">${c.toUpperCase()}</span>`).join('');
+  document.getElementById('m-sms-wrap').style.display='none';
+  document.getElementById('m-variants').innerHTML=`<span class="modal-ebr">EBR</span> ${s.ebr}<br><br><span class="modal-optin">Opt-in</span> ${s.optin}`;
+  document.getElementById('m-variants-wrap').style.display='block';
+  document.getElementById('modalOverlay').classList.add('visible');
+}
+
+function openSMSModal(tp,color){
+  document.getElementById('m-journey').textContent=tp.type+' - '+tp.journey;
+  document.getElementById('m-journey').style.color=color;
+  document.getElementById('m-day').textContent='Day '+tp.day;
+  document.getElementById('m-title').textContent='Day '+tp.day+' - '+tp.journey;
+  document.getElementById('m-title').style.color=color;
+  document.getElementById('m-purpose').textContent=tp.purpose;
+  document.getElementById('m-purpose-wrap').style.display='block';
+  document.getElementById('m-urgency-wrap').style.display='none';
+  document.getElementById('m-audience-wrap').style.display='none';
+  document.getElementById('m-tokens-wrap').style.display='none';
+  document.getElementById('m-channels').innerHTML=`<span class="modal-ch" style="background:#6b3de022;color:#6b3de0;border:1px solid #6b3de044">SMS</span>`;
+  document.getElementById('m-channels-wrap').style.display='block';
+  document.getElementById('m-sms-optin').textContent=tp.optin;
+  document.getElementById('m-sms-ebr').textContent=tp.ebr==='ALL CUSTOMERS RECEIVE OPT-IN VERSION - transactional proximity to visit covers EBR requirement.'?'All customers receive the opt-in version. Transactional proximity to the visit covers the EBR requirement for this touchpoint.':tp.ebr;
+  document.getElementById('m-sms-wrap').style.display='block';
+  document.getElementById('m-variants-wrap').style.display='none';
+  document.getElementById('modalOverlay').classList.add('visible');
+}
+
+// ── TOOLTIPS ──
+let ttEl;
+(function(){ttEl=document.createElement('div');ttEl.style.cssText='position:fixed;border-radius:10px;padding:10px 13px;font-size:12px;pointer-events:none;opacity:0;transition:opacity .12s;max-width:240px;z-index:999;';document.body.appendChild(ttEl);})();
+function updateTTTheme(){
+  const dark=currentTheme==='dark';
+  ttEl.style.background=dark?'#1e2333':'#f0ece6';
+  ttEl.style.border=dark?'1px solid rgba(255,255,255,.1)':'1px solid rgba(0,0,0,.12)';
+  ttEl.style.boxShadow=dark?'0 8px 32px rgba(0,0,0,.5)':'0 8px 32px rgba(0,0,0,.12)';
+}
+updateTTTheme();
+function ttMuted(){return currentTheme==='dark'?'#6b7280':'#5a5048';}
+function ttBody(){return currentTheme==='dark'?'#9ca3af':'#6b5e55';}
+function showTT(e,tp,color,jLabel){ttEl.innerHTML=`<div style="font-size:9px;font-family:'DM Mono',monospace;color:${color};margin-bottom:3px">${jLabel}</div><div style="font-size:9px;color:${ttMuted()};font-family:'DM Mono',monospace;margin-bottom:2px">Day ${tp.day}</div><div style="font-weight:600;font-size:13px;color:${color};margin-bottom:4px">${tp.label}</div><div style="font-size:11px;color:${ttBody()};line-height:1.5">${tp.sub}</div><div style="margin-top:7px;display:flex;gap:4px">${tp.channels.map(c=>`<span style="font-size:9px;padding:1px 7px;border-radius:10px;font-family:'DM Mono',monospace;background:${CH_COLORS[c]||'#888'}22;color:${CH_COLORS[c]||'#888'};border:1px solid ${CH_COLORS[c]||'#888'}44">${c.toUpperCase()}</span>`).join('')}</div>`;moveTT(e);ttEl.style.opacity='1';}
+function showEblastTT(e,day,track,color,label){const suppressed=isSuppressed(day);const inWindow=trackActiveInWindow(day,track);const active=!suppressed&&inWindow;const w=windowForDay(day);const setting=w?windowTrack[w.id]:'off';ttEl.innerHTML=`<div style="font-size:9px;font-family:'DM Mono',monospace;color:${active?color:ttMuted()};margin-bottom:3px">${label}</div><div style="font-size:9px;color:${ttMuted()};font-family:'DM Mono',monospace;margin-bottom:2px">Day ${day}</div><div style="font-weight:600;font-size:13px;color:${active?color:ttMuted()};margin-bottom:4px">${suppressed?'Suppressed this week':(!inWindow?`Window set to ${setting.toUpperCase()}`:label)}</div><div style="font-size:11px;color:${ttBody()}">${suppressed?`Journey touchpoint in this ${suppressMode==='2week'?'2-week window':'week'}`:`Window: ${w?w.label:'n/a'} - ${setting.toUpperCase()}`}</div>`;moveTT(e);ttEl.style.opacity='1';}
+function moveTT(e){let lx=e.clientX+14,ly=e.clientY-8;if(lx+250>window.innerWidth)lx=e.clientX-250;if(ly+160>window.innerHeight)ly=e.clientY-160;ttEl.style.left=lx+'px';ttEl.style.top=ly+'px';}
+function hideTT(){ttEl.style.opacity='0';}
+
+// ── MODAL CLOSE ──
+document.getElementById('modalClose').addEventListener('click',()=>document.getElementById('modalOverlay').classList.remove('visible'));
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))document.getElementById('modalOverlay').classList.remove('visible');});
+
+// ── CHANNEL VIEW ──
+document.getElementById('viewAll').addEventListener('click',()=>{channelView='all';document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));document.getElementById('viewAll').classList.add('active');applyVisibility();});
+document.getElementById('viewSMS').addEventListener('click',()=>{channelView='sms';document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));document.getElementById('viewSMS').classList.add('active');applyVisibility();});
+document.getElementById('viewEmail').addEventListener('click',()=>{channelView='email';document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));document.getElementById('viewEmail').classList.add('active');applyVisibility();});
+
+// ── JOURNEY TOGGLES ──
+document.getElementById('allJourneysToggle').addEventListener('click',function(){
+  const anyActive=Object.keys(JOURNEY_META).some(j=>activeJourneys.has(j));
+  if(anyActive){
+    // Turn all off
+    activeJourneys.clear();
+    document.querySelectorAll('[data-journey]').forEach(b=>b.classList.remove('active'));
+    this.classList.remove('active');
+  } else {
+    // Turn all on
+    Object.keys(JOURNEY_META).forEach(j=>activeJourneys.add(j));
+    document.querySelectorAll('[data-journey]').forEach(b=>b.classList.add('active'));
+    this.classList.add('active');
+  }
+  applyVisibility();
+});
+
+document.querySelectorAll('[data-journey]').forEach(btn=>{btn.addEventListener('click',()=>{const j=btn.dataset.journey;if(activeJourneys.has(j)){activeJourneys.delete(j);btn.classList.remove('active');}else{activeJourneys.add(j);btn.classList.add('active');}
+    // Sync all-journeys button
+    const allOn=Object.keys(JOURNEY_META).every(j=>activeJourneys.has(j));
+    const allOff=Object.keys(JOURNEY_META).every(j=>!activeJourneys.has(j));
+    const allBtn=document.getElementById('allJourneysToggle');
+    if(allOn){allBtn.classList.add('active');}else if(allOff){allBtn.classList.remove('active');}
+    applyVisibility();});});
+
+// ── EBLAST TOGGLE ──
+document.getElementById('eblastToggle').addEventListener('click',function(){eblastsVisible=!eblastsVisible;this.classList.toggle('active',eblastsVisible);applyVisibility();});
+
+// ── SUPPRESSION ──
+document.querySelectorAll('[data-suppress]').forEach(btn=>{btn.addEventListener('click',()=>{suppressMode=btn.dataset.suppress;document.querySelectorAll('[data-suppress]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');applyVisibility();});});
+
+// ── WINDOW CONTROLS ──
+document.querySelectorAll('[data-window]').forEach(group=>{const wid=group.dataset.window;group.querySelectorAll('.win-opt').forEach(btn=>{btn.addEventListener('click',()=>{const val=btn.dataset.val;windowTrack[wid]=val;group.querySelectorAll('.win-opt').forEach(b=>b.classList.remove('sel-oc','sel-as','sel-both','sel-off'));btn.classList.add('sel-'+val);applyVisibility();});});});
+
+// ── ZOOM ──
+function getViewBox(){
+  // Returns [x, y, width, height] based on channel view
+  const aboveH = AXIS_Y + 30;        // height of email section
+  const belowStart = AXIS_Y - 30;    // where SMS section starts
+  const belowH = SVG_H - belowStart; // height of SMS section
+  if(channelView==='sms')  return [0, belowStart, TOTAL_W, belowH];
+  if(channelView==='email') return [0, 0, TOTAL_W, aboveH];
+  return [0, 0, TOTAL_W, SVG_H];
+}
+
+function applyZoom(){
+  const svg=document.getElementById('svg');
+  const [vx,vy,vw,vh]=getViewBox();
+  const scaledW=Math.round(vw*currentZoom);
+  const scaledH=Math.round(vh*currentZoom);
+  svg.setAttribute('viewBox',`${vx} ${vy} ${vw} ${vh}`);
+  svg.setAttribute('width', TOTAL_W);
+  svg.setAttribute('height', vh);
+  svg.style.transform=`scale(${currentZoom})`;
+  svg.style.transformOrigin='top left';
+  svg.style.display='block';
+  svg.style.width=TOTAL_W+'px';
+  svg.style.height=vh+'px';
+  let spacer=document.getElementById('zoom-spacer');
+  if(!spacer){spacer=document.createElement('div');spacer.id='zoom-spacer';spacer.style.cssText='flex-shrink:0;pointer-events:none';document.getElementById('canvasWrap').appendChild(spacer);}
+  spacer.style.width=scaledW+'px';
+  spacer.style.height=scaledH+'px';
+  spacer.style.marginTop=(-vh)+'px';
+  document.getElementById('zoomLabel').textContent=Math.round(currentZoom*100)+'%';
+}
+document.getElementById('zoomIn').addEventListener('click',()=>{const idx=ZOOM_STEPS.findIndex(z=>z>currentZoom);if(idx!==-1){currentZoom=ZOOM_STEPS[idx];applyZoom();}});
+document.getElementById('zoomOut').addEventListener('click',()=>{const idx=[...ZOOM_STEPS].reverse().findIndex(z=>z<currentZoom);if(idx!==-1){currentZoom=ZOOM_STEPS[ZOOM_STEPS.length-1-idx];applyZoom();}});
+document.getElementById('zoomReset').addEventListener('click',()=>{currentZoom=1;applyZoom();});
+document.getElementById('canvasWrap').addEventListener('wheel',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();const delta=e.deltaY>0?-1:1;const idx=ZOOM_STEPS.indexOf(currentZoom);const newIdx=Math.max(0,Math.min(ZOOM_STEPS.length-1,idx+delta));currentZoom=ZOOM_STEPS[newIdx];applyZoom();}},{passive:false});
+
+// ── DRAG SCROLL ──
+const wrap=document.getElementById('canvasWrap');
+let isDown=false,startX,startY,scrollLeft,scrollTop;
+wrap.addEventListener('mousedown',e=>{isDown=true;wrap.classList.add('grabbing');startX=e.pageX-wrap.offsetLeft;startY=e.pageY-wrap.offsetTop;scrollLeft=wrap.scrollLeft;scrollTop=wrap.scrollTop;});
+wrap.addEventListener('mouseleave',()=>{isDown=false;wrap.classList.remove('grabbing');});
+wrap.addEventListener('mouseup',()=>{isDown=false;wrap.classList.remove('grabbing');});
+wrap.addEventListener('mousemove',e=>{if(!isDown)return;e.preventDefault();const x=e.pageX-wrap.offsetLeft;const y=e.pageY-wrap.offsetTop;wrap.scrollLeft=scrollLeft-(x-startX)*1.2;wrap.scrollTop=scrollTop-(y-startY)*1.2;});
+
+// ── VOLUME TABLE ──
+function numClass(n){if(n===0)return 'n0';if(n<=3)return 'nl';if(n<=7)return 'nm';return 'nh';}
+
+function buildVolumeTable(){
+  const tbody=document.getElementById('volBody');if(!tbody)return;tbody.innerHTML='';
+  let grandEmail=0,grandSms=0,grandStandalone=0,grandEblast=0;
+  WINDOW_META.forEach(wm=>{
+    const activeTps=JOURNEY_TOUCHPOINTS.filter(tp=>activeJourneys.has(tp.journey)&&tp.day>=wm.from&&tp.day<=wm.to);
+    let wEmails=0,wSms=0;
+    activeTps.forEach(tp=>{if(tp.channels.includes('email'))wEmails++;if(tp.channels.includes('sms'))wSms++;});
+    const activeSMSTps=SMS_TOUCHPOINTS.filter(tp=>tp.type==='STANDALONE'&&tp.day>=wm.from&&tp.day<=wm.to);
+    const wStandalone=activeSMSTps.length;
+    let wEblasts=0;
+    if(eblastsVisible){for(let day=7;day<=MAX_DAY;day+=7){if(day<wm.from||day>wm.to)continue;if(isSuppressed(day))continue;if(trackActiveInWindow(day,'oc'))wEblasts++;if(trackActiveInWindow(day,'as'))wEblasts++;}}
+    const wTotal=wEmails+wSms+wStandalone+wEblasts;
+    grandEmail+=wEmails;grandSms+=wSms;grandStandalone+=wStandalone;grandEblast+=wEblasts;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="wbadge"><span class="wbadge-dot" style="background:${wm.dot}"></span>${wm.label}</span></td><td class="r" style="color:var(--muted);font-size:10px">${wm.from}-${wm.to}</td><td class="r"><span class="${numClass(wEmails)}">${wEmails}</span></td><td class="r"><span class="${numClass(wSms)}">${wSms}</span></td><td class="r"><span class="${numClass(wStandalone)}">${wStandalone}</span></td><td class="r"><span class="${numClass(wEblasts)}">${wEblasts}</span></td><td class="r"><span class="${numClass(wTotal)}">${wTotal}</span></td>`;
+    tbody.appendChild(tr);
+  });
+  const grandTotal=grandEmail+grandSms+grandStandalone+grandEblast;
+  const tr=document.createElement('tr');tr.className='sep';
+  tr.innerHTML=`<td colspan="2">Total (2 years)</td><td class="r">${grandEmail}</td><td class="r">${grandSms}</td><td class="r">${grandStandalone}</td><td class="r">${grandEblast}</td><td class="r" style="color:#a320bb">${grandTotal}</td>`;
+  tbody.appendChild(tr);
+}
+
+// ── SMS METRICS TABLE ──
+function buildSMSMetrics(){
+  const tbody=document.getElementById('smsBody');if(!tbody)return;tbody.innerHTML='';
+  const stages=[
+    {label:'Welcome and loyalty (Day 0-7)',    from:0,   to:7,   cadence:'Post-visit'},
+    {label:'Deferred services (Day 8-75)',      from:8,   to:75,  cadence:'Service-triggered'},
+    {label:'OC due window (Day 76-120)',        from:76,  to:120, cadence:'Interval-based'},
+    {label:'Churn risk (Day 121-180)',          from:121, to:180, cadence:'Every 15 days'},
+    {label:'Lapsed (Day 181-450)',              from:181, to:450, cadence:'Monthly'},
+    {label:'Lost (Day 451-540)',                from:451, to:540, cadence:'Month 16 and 17 only'},
+  ];
+  const dots={0:'#1d6cc4',8:'#c45a0a',76:'#0d8f5f',121:'#c0180a',181:'#6b3de0',451:'#a07a00'};
+  let grandJ=0,grandS=0;
+  stages.forEach(s=>{
+    const journeySMS=SMS_TOUCHPOINTS.filter(tp=>tp.type==='JOURNEY'&&tp.day>=s.from&&tp.day<=s.to).length;
+    const standaloneSMS=SMS_TOUCHPOINTS.filter(tp=>tp.type==='STANDALONE'&&tp.day>=s.from&&tp.day<=s.to).length;
+    const total=journeySMS+standaloneSMS;
+    grandJ+=journeySMS;grandS+=standaloneSMS;
+    const dot=dots[s.from]||'#888';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><span class="wbadge"><span class="wbadge-dot" style="background:${dot}"></span>${s.label}</span></td><td class="r" style="color:var(--muted);font-size:10px">${s.from}-${s.to}</td><td class="r"><span class="${numClass(journeySMS)}">${journeySMS}</span></td><td class="r"><span class="${numClass(standaloneSMS)}">${standaloneSMS}</span></td><td class="r"><span class="${numClass(total)}">${total}</span></td><td style="color:var(--muted);font-size:10px">${s.cadence}</td>`;
+    tbody.appendChild(tr);
+  });
+  const tr=document.createElement('tr');tr.className='sep';
+  tr.innerHTML=`<td colspan="2">Total</td><td class="r">${grandJ}</td><td class="r">${grandS}</td><td class="r" style="color:#a320bb">${grandJ+grandS}</td><td></td>`;
+  tbody.appendChild(tr);
+
+  const metrics=document.getElementById('smsMetricsBody');if(!metrics)return;metrics.innerHTML='';
+  const totalSMS=SMS_TOUCHPOINTS.length;
+  const journeyCount=SMS_TOUCHPOINTS.filter(t=>t.type==='JOURNEY').length;
+  const standaloneCount=SMS_TOUCHPOINTS.filter(t=>t.type==='STANDALONE').length;
+  const rows=[
+    ['Total SMS touchpoints (Day 1-486)',totalSMS],
+    ['Journey SMS',`${journeyCount} (${Math.round(journeyCount/totalSMS*100)}%)`],
+    ['Standalone SMS',`${standaloneCount} (${Math.round(standaloneCount/totalSMS*100)}%)`],
+    ['Total message variants (opt-in + EBR)',`${totalSMS*2}`],
+    ['EBR window closes','Day 540 (18 months)'],
+    ['Opt-in reply keyword','START'],
+    ['Service attribution standard','Manufacturer recommended / Grease Monkey recommended'],
+    ['Lapsed cadence','Monthly (every 30 days)'],
+    ['Lost cadence','Month 16 and 17 only'],
+  ];
+  rows.forEach(([label,val])=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${label}</td><td class="r" style="color:var(--text)">${val}</td>`;
+    metrics.appendChild(tr);
+  });
+}
+
+// ── PANEL TOGGLES ──
+document.getElementById('volToggle').addEventListener('click',function(){
+  const panel=document.getElementById('volPanel');const isOpen=panel.classList.toggle('open');
+  this.classList.toggle('active',isOpen);if(isOpen){buildVolumeTable();}
+  document.getElementById('smsPanel').classList.remove('open');document.getElementById('smsMetricsToggle').classList.remove('active');
+});
+document.getElementById('smsMetricsToggle').addEventListener('click',function(){
+  const panel=document.getElementById('smsPanel');const isOpen=panel.classList.toggle('open');
+  this.classList.toggle('active',isOpen);if(isOpen){buildSMSMetrics();}
+  document.getElementById('volPanel').classList.remove('open');document.getElementById('volToggle').classList.remove('active');
+});
+
+// ── THEME TOGGLE ──
+const PALETTES={
+  light:{
+    welcome:'#1d6cc4', oilremind:'#0d8f5f', convertlof:'#c45a0a', deferred:'#a07a00',
+    lapsed:'#c0180a', lost:'#6b3de0', inspection:'#a06000', newplan:'#a320bb',
+    eblastOc:'#0d8f5f', eblastAs:'#c45a0a', eblastSlate:'#4a5568',
+    bubbleFill:'#f0ece6',
+    axisLine:'rgba(0,0,0,.2)', axisMajorTick:'rgba(0,0,0,.25)', axisMinorTick:'rgba(0,0,0,.08)',
+    axisLabelDefault:'rgba(0,0,0,.5)', axisMinorLabel:'rgba(0,0,0,.18)',
+    sectionLabel:'rgba(0,0,0,.15)', tpLabel:'rgba(0,0,0,.65)', smsLabel:'rgba(0,0,0,.6)',
+    windows:[
+      {color:'rgba(29,108,196,.07)',lc:'#1d6cc4'},{color:'rgba(196,90,10,.07)',lc:'#c45a0a'},
+      {color:'rgba(13,143,95,.07)',lc:'#0d8f5f'},{color:'rgba(192,24,10,.07)',lc:'#c0180a'},
+      {color:'rgba(160,96,0,.07)',lc:'#a06000'},{color:'rgba(107,61,224,.07)',lc:'#6b3de0'},
+      {color:'rgba(160,122,0,.07)',lc:'#a07a00'},
+    ],
+    milestoneHL:{180:'#c0180a',240:'#a06000'},
+  },
+  dark:{
+    welcome:'#60a5fa', oilremind:'#34d399', convertlof:'#fb923c', deferred:'#fbbf24',
+    lapsed:'#f87171', lost:'#a78bfa', inspection:'#f59e0b', newplan:'#e879f9',
+    eblastOc:'#34d399', eblastAs:'#f97316', eblastSlate:'#94a3b8',
+    bubbleFill:'#181c26',
+    axisLine:'rgba(255,255,255,.18)', axisMajorTick:'rgba(255,255,255,.3)', axisMinorTick:'rgba(255,255,255,.08)',
+    axisLabelDefault:'rgba(255,255,255,.45)', axisMinorLabel:'rgba(255,255,255,.2)',
+    sectionLabel:'rgba(255,255,255,.1)', tpLabel:'rgba(255,255,255,.75)', smsLabel:'rgba(255,255,255,.7)',
+    windows:[
+      {color:'rgba(96,165,250,.06)',lc:'#60a5fa'},{color:'rgba(251,146,60,.06)',lc:'#fb923c'},
+      {color:'rgba(52,211,153,.06)',lc:'#34d399'},{color:'rgba(248,113,113,.06)',lc:'#f87171'},
+      {color:'rgba(245,158,11,.06)',lc:'#f59e0b'},{color:'rgba(167,139,250,.06)',lc:'#a78bfa'},
+      {color:'rgba(251,191,36,.06)',lc:'#fbbf24'},
+    ],
+    milestoneHL:{180:'#f87171',240:'#f59e0b'},
+  }
+};
+
+function applyTheme(theme){
+  const p=PALETTES[theme];
+  // CSS class on root
+  document.documentElement.classList.toggle('dark', theme==='dark');
+  // Update JOURNEY_META colors
+  const jkeys=['welcome','oilremind','convertlof','deferred','lapsed','lost','inspection','newplan'];
+  jkeys.forEach(k=>{ JOURNEY_META[k].color=p[k]; });
+  // Update WINDOWS
+  WINDOWS.forEach((w,i)=>{ w.color=p.windows[i].color; w.lc=p.windows[i].lc; });
+  // Update MILESTONE_HL
+  Object.assign(MILESTONE_HL, p.milestoneHL);
+  // Update CH_COLORS for SMS
+  CH_COLORS.email = theme==='dark' ? '#60a5fa' : '#1d6cc4';
+  CH_COLORS.sms   = theme==='dark' ? '#a78bfa' : '#6b3de0';
+  // Update leg-btn border colors in header
+  const borderMap={
+    welcome: theme==='dark'?'rgba(96,165,250,.3)':'rgba(29,108,196,.3)',
+    oilremind: theme==='dark'?'rgba(52,211,153,.3)':'rgba(13,143,95,.3)',
+    convertlof: theme==='dark'?'rgba(251,146,60,.3)':'rgba(196,90,10,.3)',
+    deferred: theme==='dark'?'rgba(251,191,36,.3)':'rgba(160,122,0,.3)',
+    lapsed: theme==='dark'?'rgba(248,113,113,.3)':'rgba(192,24,10,.3)',
+    lost: theme==='dark'?'rgba(167,139,250,.3)':'rgba(107,61,224,.3)',
+    inspection: theme==='dark'?'rgba(245,158,11,.3)':'rgba(160,96,0,.3)',
+    newplan: theme==='dark'?'rgba(232,121,249,.4)':'rgba(163,32,187,.4)',
+  };
+  document.querySelectorAll('[data-journey]').forEach(btn=>{
+    const j=btn.dataset.journey;
+    if(borderMap[j]) btn.style.borderColor=borderMap[j];
+    const dot=btn.querySelector('.leg-dot');
+    if(dot) dot.style.background=p[j]||'';
+  });
+  // Update eblast toggle dot
+  const eblastDot=document.querySelector('#eblastToggle .leg-dot');
+  if(eblastDot) eblastDot.style.background=p.eblastSlate;
+  // Update all journeys dot
+  const allDot=document.querySelector('#allJourneysToggle .leg-dot');
+  if(allDot) allDot.style.background= theme==='dark'?'#e8eaf0':'#1a1510';
+  // Update toggle button label
+  const btn=document.getElementById('themeToggle');
+  btn.textContent= theme==='dark' ? '☀ Light' : '☾ Dark';
+  // Update tooltip theme
+  updateTTTheme();
+  // Rebuild SVG with new colors
+  build();
+}
+
+const _tlThemeBtn = document.getElementById('themeToggle');
+if(_tlThemeBtn) _tlThemeBtn.addEventListener('click',()=>{
+  currentTheme= currentTheme==='light'?'dark':'light';
+  applyTheme(currentTheme);
+});
+
+build();
+</script>
+</div><!-- end #panel-timeline -->
+
+<!-- ── FLOW PANEL ── -->
+<div class="view-panel" id="panel-flow">
+
+<div id="viewport">
+  <div id="scroller">
+    <div id="world">
+      <svg id="arrows"></svg>
+    </div>
+  </div>
+</div>
+
+<div class="zctrl">
+  <button class="zbtn" id="fitBtn">⊡</button>
+  <button class="zbtn" id="zOut">−</button>
+  <button class="zbtn" id="zIn">+</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <button class="m-close" id="mClose">×</button>
+    <div class="m-bar" id="mBar"></div>
+    <div class="m-ew" id="mEw"></div>
+    <div class="m-title" id="mTitle"></div>
+    <div class="m-sec" id="mPurpWrap"><div class="m-lbl">Purpose</div><div class="m-body" id="mPurp"></div></div>
+    <div class="m-sec" id="mUrgWrap" style="display:none"><div class="m-lbl">Urgency arc</div><div class="m-body" id="mUrg"></div><div class="u-bar" id="mUBar"></div></div>
+    <div class="m-sec" id="mTokWrap" style="display:none"><div class="m-lbl">Personalization tokens</div><div class="m-toks" id="mToks"></div></div>
+    <div class="m-sec" id="mChWrap"><div class="m-lbl">Channels</div><div class="m-chs" id="mChs"></div></div>
+    <div class="m-sec" id="mSmsWrap" style="display:none">
+      <div class="m-lbl">SMS copy</div>
+      <span class="sms-lbl" style="background:rgba(29,108,196,.1);color:#1d6cc4;border:1px solid rgba(29,108,196,.2)">EBR</span>
+      <div class="sms-box" id="mSmsEbr"></div>
+      <div style="margin-top:8px"><span class="sms-lbl" style="background:rgba(163,32,187,.1);color:#a320bb;border:1px solid rgba(163,32,187,.2)">Opt-in</span></div>
+      <div class="sms-box" id="mSmsOptin"></div>
+    </div>
+    <div class="m-sec" id="mHandWrap" style="display:none"><div class="m-lbl">Handoff / branching logic</div><div class="m-body" id="mHand"></div></div>
+  </div>
+</div>
+
+<script>
+// ─── PALETTE ───────────────────────────────────────────────────
+const C={
+  welcome:'#1d6cc4', lof:'#c45a0a', deferred:'#a07a00',
+  newplan:'#a320bb', oc:'#0d8f5f',
+  lapsed:'#c0180a', lost:'#6b3de0',
+  inspection:'#a06000', eblast:'#0d8f5f',
+  decision:'#5a5048', entry:'#1a1510', ret:'#0d8f5f',
+};
+const CH={email:'#1d6cc4',sms:'#6b3de0'};
+
+// ─── SMS COPY ──────────────────────────────────────────────────
+const SMS={
+  1:{optin:`Grease Monkey: Hi [First Name]! Thank you for choosing Grease Monkey. Could you take 30 seconds to leave us a review? [URL] Text START to receive reminders and exclusive discounts.`,ebr:`ALL CUSTOMERS — transactional proximity covers EBR requirement.`},
+  3:{optin:`Grease Monkey: Hi [First Name], at your [date] visit our technician noted [service] is manufacturer recommended for your [Year Make Model]. This one is worth addressing soon. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], at your [date] visit our technician noted [service] is manufacturer recommended for your [Year Make Model]. This item is worth addressing at your next visit. Text START to receive reminders for your next car maintenance service.`},
+  7:{optin:`Grease Monkey: Hi [First Name], here's a quick summary for your [Year Make Model]: [oil type] installed at [mileage] miles on [date]. Next oil change due [date] or [next mileage] miles. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], here's a quick summary for your [Year Make Model]: [oil type] installed at [mileage] miles on [date]. Next oil change due [date] or [next mileage] miles. Text START to receive reminders for your next car maintenance service.`},
+  45:{optin:`Grease Monkey: Hi [First Name], your [Year Make Model] is halfway to its next oil change. [If deferred service applicable.] Next due around [date] or [next mileage] miles. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] is halfway to its next recommended oil change due around [date] or [next mileage] miles. Text START to receive reminders for your next car maintenance service.`},
+  76:{optin:`Grease Monkey: Hi [First Name], your [Year Make Model] is almost due for an oil change — coming up on [date] or [next mileage] miles. [Offer.] Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] is almost due for an oil change — coming up on [date] or [next mileage] miles. Visit [Store] to schedule. Text START to receive reminders for your next car maintenance service.`},
+  90:{optin:`Grease Monkey: Hi [First Name], your [Year Make Model] is due for an oil change today. Come see us at [Store] — we'll get you in and out quickly. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] is due for an oil change today at [mileage] miles. Visit [Store] to schedule service. Text START to receive reminders for your next car maintenance service.`},
+  105:{optin:`Grease Monkey: Hi [First Name], Your [Year Make Model] is coming up on its recommended oil change interval. Come in soon and we'll take care of it. [Offer.] Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], Your [Year Make Model] is coming up on its recommended oil change interval at approximately [estimated mileage] miles. Text START to receive reminders for your next car maintenance service.`},
+  120:{optin:`Grease Monkey: Hi [First Name], your [Year Make Model] is officially past due — [days] days and [miles over] miles over the recommended interval. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] is officially past due — [days] days and [miles over] miles over the recommended interval. Text START to receive reminders for your next car maintenance service.`},
+  135:{optin:`Grease Monkey: Hi [First Name], the longer oil goes unchanged, the harder your engine works. Your [Year Make Model] is now [miles over] miles overdue. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], the longer oil goes unchanged, the harder your engine works. Your [Year Make Model] is now [miles over] miles past its recommended interval. Text START to receive reminders for your next car maintenance service.`},
+  150:{optin:`Grease Monkey: Hi [First Name], your [Year Make Model] has gone [days] days without a fresh oil change. We're making it easy to come back — [best offer]. This won't last. Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] has gone [days] days without a fresh oil change. At this point engine oil is significantly degraded and your vehicle is approximately [miles over] miles overdue. Text START to receive reminders for your next car maintenance service.`},
+  165:{optin:`Grease Monkey: Hi [First Name], we'd hate to lose you. Your [Year Make Model] is [days] days overdue for service. [Best offer.] Book: [link]. Text START and we'll keep you on track.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] is [days] days past its recommended oil change interval. Text START to receive reminders for your next car maintenance service.`},
+  180:{optin:`Grease Monkey: Hi [First Name], skipping an oil change today can mean a much bigger bill down the road. Your [Year Make Model] is overdue — [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], your [Year Make Model] last had service at [Store] on [date]. Delaying an oil change can lead to accelerated engine wear. Text START to receive reminders for your next car maintenance service.`},
+  210:{optin:`Grease Monkey: Hi [First Name], as oil breaks down it stops lubricating your engine properly — metal parts wear and heat builds up. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], as oil breaks down it loses its ability to lubricate and protect your engine. Your [Year Make Model] is approximately [estimated mileage] miles since its last service. Text START to receive reminders for your next car maintenance service.`},
+  240:{optin:`Grease Monkey: Hi [First Name], dirty oil makes your engine work harder — more fuel burned and less performance. [Offer.] Book: [link]. Text START to receive reminders and exclusive discounts.`,ebr:`Grease Monkey: Hi [First Name], degraded oil increases engine friction, which reduces fuel efficiency over time. Your [Year Make Model] is approximately [estimated mileage] miles since its last oil change. Text START to receive reminders for your next car maintenance service.`},
+};
+
+// ─── LAYOUT CONSTANTS ─────────────────────────────────────────
+// 5 columns, each 240px apart — plenty of room for 172px wide tiles
+//  NP=One&Done   OC=OilChange   MAIN=spine/decisions   LOF=LOF/Return   DEF=Deferred   RIGHT=inspection/eblast
+const TW=172, TH=82;
+const DW=186, DH=58;
+const GAP = 240; // px between column centers
+const COL = {
+  NP:   120,
+  OC:   120 + GAP,       // 360
+  MAIN: 120 + GAP*2,     // 600
+  LOF:  120 + GAP*3,     // 840
+  DEF:  120 + GAP*4,     // 1080
+  RIGHT:120 + GAP*5,     // 1320
+};
+
+function tx(col){ return col - TW/2; }
+function dx(col){ return col - DW/2; }
+
+// ─── NODES ────────────────────────────────────────────────────
+const NODES=[
+  // ── ENTRY ─────────────────────────────────
+  {id:'visit',   x:COL.MAIN-90, y:30,  w:180,h:50, type:'entry', color:C.entry,
+   journey:'Entry', day:0, label:'Customer Visit', sub:'All journeys begin here', channels:[],
+   purpose:'A service visit at Day 0 triggers all downstream journeys. Customer type and services performed determine which parallel paths activate immediately.',
+   handoff:'Triggers: OC/LOF branch check, Deferred Services check (if OC performed), Welcome or LOF email, One & Done plan, weekly eblast tracks.'},
+
+  // ── BRANCH 1: OC or LOF? ──────────────────
+  {id:'dec_oc',  x:dx(COL.MAIN), y:120, w:DW,h:DH, type:'decision', color:C.decision,
+   journey:'Routing', label:'Oil change performed?', sub:'', channels:[],
+   purpose:'Determines whether the customer receives a standard Welcome email and enters the OC journey, or instead receives the LOF conversion email.',
+   handoff:'Yes → Welcome email + OC reminder journey + Deferred Services check.\nNo → LOF email only (standalone).'},
+
+  // ── WELCOME ───────────────────────────────
+  {id:'welcome', x:tx(COL.OC), y:228, w:TW,h:TH, color:C.welcome,
+   journey:'Welcome', day:1, label:'Welcome email', sub:'Transaction confirmed · Review request · Opt-in',
+   channels:['email','sms'], smsDay:1,
+   purpose:'Confirms the transaction, requests a review, and prompts SMS opt-in. EBR-safe — transactional proximity to the visit covers the requirement. All oil-change customers receive this.',
+   handoff:'Continues into OC Reminder (Day 76). One & Done plan begins in parallel at Day 7.'},
+
+  // ── LOF ───────────────────────────────────
+  {id:'lof',     x:tx(COL.LOF), y:228, w:TW,h:TH, color:C.lof,
+   journey:'Convert LOF', day:1, label:'LOF email', sub:'Convert to full-service customer',
+   channels:['email'],
+   purpose:'Replaces the Welcome email for customers who did not receive an oil change. Designed to convert the LOF customer to a full-service oil change customer on their next visit.',
+   handoff:'Standalone — no continuation journey.'},
+
+  // ── BRANCH 2: Deferred services? (only after OC) ──
+  {id:'dec_def', x:dx(COL.DEF), y:228, w:DW,h:DH, type:'decision', color:C.deferred,
+   journey:'Routing', label:'Deferred services flagged?', sub:'', channels:[],
+   purpose:'If the technician flagged manufacturer-recommended services that were not completed at the visit, the Deferred Services journey activates in parallel alongside the OC/One & Done journeys.',
+   handoff:'Yes → Deferred Services journey (Days 3, 14, 30).\nNo → Skipped.'},
+
+  // ── DEFERRED CHAIN ────────────────────────
+  {id:'def_3',   x:tx(COL.DEF), y:338, w:TW,h:TH, color:C.deferred,
+   journey:'Deferred Svcs', day:3, label:'Urgent services', sub:'High-priority · manufacturer-recommended',
+   channels:['email','sms'], smsDay:3,
+   purpose:'Sent at Day 3 when high-priority manufacturer-recommended services were flagged but not completed. Urgency framing focused on vehicle safety and manufacturer guidance.'},
+  {id:'def_14',  x:tx(COL.DEF), y:450, w:TW,h:TH, color:C.deferred,
+   journey:'Deferred Svcs', day:14, label:'Mid-priority services', sub:'Mid-priority follow-up',
+   channels:['email'],
+   purpose:'Follow-up at Day 14 on mid-priority deferred services. Less urgent tone but reinforces the manufacturer recommendation.'},
+  {id:'def_30',  x:tx(COL.DEF), y:562, w:TW,h:TH, color:C.deferred,
+   journey:'Deferred Svcs', day:30, label:'Low-priority services', sub:'Final reminder',
+   channels:['email'],
+   purpose:'Final deferred services reminder at Day 30 for low-priority items. Informational — plants the seed for the next visit.'},
+
+  // ── STATE INSPECTION (independent, floating) ──
+  {id:'inspection', x:tx(COL.RIGHT), y:338, w:TW,h:TH, type:'inspection', color:C.inspection,
+   journey:'State Inspection', day:'~330', label:'Inspection due', sub:'Date-triggered · fully independent',
+   channels:['email'],
+   purpose:'Triggered by the customer\'s state inspection due date — completely independent of visit recency or lifecycle position. Fires approximately 30 days before the customer\'s inspection is due, regardless of where they are in any other journey.'},
+
+  // ── EBLAST ────────────────────────────────
+  {id:'eblast',  x:tx(COL.RIGHT), y:480, w:TW,h:72, type:'eblast', color:C.eblast,
+   journey:'Eblasts', day:'7–540', label:'Weekly eblasts', sub:'OC track + AS track · continuous',
+   channels:['email'],
+   purpose:'Two weekly eblast tracks run continuously from Day 7 through Day 540 (EBR window closes at 18 months): Oil Change (OC) promotions and Additional Services (AS) promotions. Suppression windows are configurable by lifecycle stage — journey touchpoints take precedence within their windows.',
+   handoff:'OC eblasts suppressed during active journey touchpoint windows. AS track runs independently throughout.'},
+
+  // ── ONE & DONE ────────────────────────────
+  {id:'np_7',   x:tx(COL.NP), y:338, w:TW,h:TH, color:C.newplan, isNew:true, urgency:1,
+   journey:'One & Done', day:7, label:'Loyalty builder', sub:'Vehicle summary · trust phase · no ask',
+   channels:['email','sms'], smsDay:7,
+   urgencyArc:'Urgency: none. Trust-building phase only. No ask, no offer. Personalization depth is high.',
+   tokens:['vehicle year/make/model','oil type','mileage at visit','next due date','deferred services','store location'],
+   purpose:'The customer just made their first decision to trust you. Day 7 is the window to reinforce that decision before the relationship goes cold. Make them feel known, not marketed to.'},
+  {id:'np_45',  x:tx(COL.NP), y:450, w:TW,h:TH, color:C.newplan, isNew:true, urgency:1,
+   journey:'One & Done', day:45, label:'Mid OC check-in', sub:'Midpoint · relationship building',
+   channels:['email','sms'], smsDay:45,
+   urgencyArc:'Urgency: low. Estimated mileage is now meaningful. Deferred services get a second mention. No offer.',
+   tokens:['vehicle year/make/model','estimated current mileage','next due date','deferred services callback'],
+   purpose:'Sits at the midpoint between visit and the due-soon window. Ideal moment to keep the brand present and reinforce vehicle knowledge. No service ask is credible yet.'},
+  {id:'np_105', x:tx(COL.NP), y:562, w:TW,h:TH, color:C.newplan, isNew:true, urgency:2,
+   journey:'One & Done', day:105, label:'Pre-overdue warning', sub:'15 days before overdue · educational',
+   channels:['email','sms'], smsDay:105,
+   urgencyArc:'Urgency: building. Educational angle creates urgency through information, not pressure. No offer yet.',
+   tokens:['vehicle year/make/model','oil type','days since last visit','estimated current mileage','days until overdue','oil degradation context by type'],
+   purpose:'Customer is 15 days away from being officially overdue. Unique job: educational. What actually happens to oil and your engine when you go past the change interval? Helpful, not pushy.'},
+  {id:'np_135', x:tx(COL.NP), y:680, w:TW,h:TH, color:C.newplan, isNew:true, urgency:3,
+   journey:'One & Done', day:135, label:'Urgency builder', sub:'45 days overdue · tone shifts direct',
+   channels:['email','sms'], smsDay:135,
+   urgencyArc:'Urgency: high. First touch where urgency is the primary message. Miles over interval is the headline.',
+   tokens:['vehicle year/make/model','estimated miles over interval','days overdue','deferred services age in months','oil type consequence language'],
+   purpose:'OC reminder is silent. Customer is 45 days overdue. Tone shifts from informative to direct. Deferred services flagged at visit have been waiting over 4 months.'},
+  {id:'np_150', x:tx(COL.NP), y:793, w:TW,h:TH, color:C.newplan, isNew:true, urgency:4,
+   journey:'One & Done', day:150, label:'Final push', sub:'30 days to window close · best offer',
+   channels:['email','sms'], smsDay:150,
+   urgencyArc:'Urgency: very high. Best available offer deployed. 30-day countdown to 180-day window is a credible factual deadline.',
+   tokens:['vehicle year/make/model','estimated miles over interval','days overdue','days until 180-day mark','best available offer','deferred services months outstanding'],
+   purpose:'30 days left before the 180-day window closes. Most critical conversion moment. Best available offer. Vehicle data has been building to this moment.'},
+  {id:'np_165', x:tx(COL.NP), y:906, w:TW,h:TH, color:C.newplan, isNew:true, urgency:5,
+   journey:'One & Done', day:165, label:'Last chance', sub:'Final touch before lapsed handoff',
+   channels:['email','sms'], smsDay:165,
+   urgencyArc:'Urgency: maximum. Personalization razor-focused. Stripping everything to the most compelling data point and the offer.',
+   tokens:['vehicle year/make/model','estimated miles over interval','days until 180-day handoff','final offer'],
+   purpose:'Final touch before 180-day handoff to lapsed. Shortest, most direct message in the entire journey. If this does not convert, the customer exits to lapsed.',
+   handoff:'No return by Day 180 → Lapsed journey.'},
+
+  // ── OC REMINDER CHAIN ─────────────────────
+  {id:'oc_76',  x:tx(COL.OC), y:450, w:TW,h:TH, color:C.oc,
+   journey:'Oil Change', day:76, label:'Due soon', sub:'Coming up on 90-day interval',
+   channels:['email','sms'], smsDay:76,
+   purpose:'Coming up on the 90-day / 3,000-mile interval. First proactive reminder, positive framing, light offer where applicable.'},
+  {id:'oc_90',  x:tx(COL.OC), y:562, w:TW,h:TH, color:C.oc,
+   journey:'Oil Change', day:90, label:'Due now', sub:'Highest intent moment',
+   channels:['email','sms'], smsDay:90,
+   purpose:'Oil change due today. Highest intent moment in the entire journey. Direct, action-oriented, personalized with vehicle and mileage data.'},
+  {id:'oc_120', x:tx(COL.OC), y:680, w:TW,h:TH, color:C.oc, isOCR120:true,
+   journey:'Oil Change', day:120, label:'Past due ✦', sub:'Upgraded for all when One & Done active',
+   channels:['email','sms'], smsDay:120,
+   purpose:'When the One & Done plan is active, this upgrades from a generic past due reminder to a personalized overdue alert for ALL customers. Entry point of the urgency arc.',
+   handoff:'One & Done customers continue to Day 135+. Returning customers stop here. All customers proceed if no return by Day 120.'},
+
+  // ── DECISION: Returns by 180? ─────────────
+  {id:'dec_ret', x:dx(COL.MAIN), y:1028, w:DW,h:DH, type:'decision', color:C.decision,
+   journey:'Routing', label:'Returns by Day 180?', sub:'', channels:[],
+   purpose:'The critical decision point. If the customer returns at any point before Day 180, all journey timers reset and a new visit cycle begins. If no return, the customer transitions to Lapsed.',
+   handoff:'Yes → New visit! All timers reset to Day 0. New Welcome email sent.\nNo → Lapsed journey begins at Day 180.'},
+
+  // ── NEW VISIT / RETURN ────────────────────
+  {id:'return',  x:tx(COL.LOF), y:1028, w:160,h:56, type:'return', color:C.ret,
+   journey:'Return', label:'↩ New visit', sub:'Journey resets to Day 0',
+   channels:[],
+   purpose:'If the customer returns for service at any point before Day 180, all journey timers reset completely. A new Welcome email is sent and the full journey begins again.',
+   handoff:'All active journey timers reset to Day 0.\nNew Welcome email triggers.\nEblast suppression window reactivates.\nDeferred Services restarts if new services flagged.'},
+
+  // ── LAPSED ────────────────────────────────
+  {id:'lap_180', x:tx(COL.OC), y:1138, w:TW,h:TH, color:C.lapsed,
+   journey:'Lapsed', day:180, label:'We miss you 1', sub:'Cost of neglect angle',
+   channels:['email','sms'], smsDay:180,
+   purpose:'Handoff from active journey at Day 180. Oil change angle: cost of neglect — a small service now beats a costly repair later.',
+   handoff:'Customer has officially entered Lapsed status.'},
+  {id:'lap_210', x:tx(COL.OC), y:1250, w:TW,h:TH, color:C.lapsed,
+   journey:'Lapsed', day:210, label:'We miss you 2', sub:'Oil degradation angle',
+   channels:['email','sms'], smsDay:210,
+   purpose:'Informational: what degraded oil actually does to an engine over time. Metal parts wear, heat builds, damage accumulates.'},
+  {id:'lap_240', x:tx(COL.OC), y:1362, w:TW,h:TH, color:C.lapsed,
+   journey:'Lapsed', day:240, label:'We miss you 3', sub:'Fuel economy angle',
+   channels:['email','sms'], smsDay:240,
+   purpose:'Oil change angle: fuel economy and performance. Dirty oil makes your engine work harder — more fuel burned, less performance.'},
+
+  // ── DECISION: Returns by 365? ─────────────
+  {id:'dec_lost', x:dx(COL.MAIN), y:1480, w:DW,h:DH, type:'decision', color:C.decision,
+   journey:'Routing', label:'Returns by Day 365?', sub:'', channels:[],
+   purpose:'After the lapsed sequence, a second decision point. Standalone SMS continues in the background through the lapsed window (Days 270–365). If no return by Day 365, the customer transitions to Lost.',
+   handoff:'Yes → New visit, journey resets to Day 0.\nNo → Lost customer journey.'},
+
+  // ── RETURN (second) ───────────────────────
+  {id:'return2', x:tx(COL.LOF), y:1480, w:160,h:56, type:'return', color:C.ret,
+   journey:'Return', label:'↩ New visit', sub:'Journey resets to Day 0',
+   channels:[],
+   purpose:'If the customer returns at any point during or after the lapsed sequence, all timers reset completely and the journey begins again from Day 0.',
+   handoff:'All active journey timers reset to Day 0.\nNew Welcome email triggers.\nDeferred Services restarts if new services flagged.'},
+
+  // ── LOST ──────────────────────────────────
+  {id:'lost_365', x:tx(COL.OC), y:1590, w:TW,h:TH, color:C.lost,
+   journey:'Lost', day:365, label:'Lost re-engage 1', sub:'12-month outreach',
+   channels:['email'],
+   purpose:'12-month outreach. Warm, non-pressured reconnection. Resale value and service history angle.'},
+  {id:'lost_545', x:tx(COL.OC), y:1702, w:TW,h:TH, color:C.lost,
+   journey:'Lost', day:545, label:'Lost re-engage 2', sub:'18-month outreach',
+   channels:['email'],
+   purpose:'18-month outreach. Simple and warm. Reinforces that the store is still available and the vehicle still has a home there.'},
+  {id:'lost_730', x:tx(COL.OC), y:1814, w:TW,h:TH, color:C.lost,
+   journey:'Lost', day:730, label:'Lost re-engage 3', sub:'24-month final outreach',
+   channels:['email'],
+   purpose:'24-month final outreach. EBR window closes at 18 months — this is opt-in only. Final attempt before the customer is considered permanently lapsed.',
+   handoff:'No further journey touchpoints after Day 730.'},
+];
+
+// ─── ARROWS ───────────────────────────────────────────────────
+// from/to = node id; label; color; dashed; fromEdge/toEdge override ('top','bottom','left','right')
+const ARROWS=[
+  // visit → dec_oc
+  {from:'visit', to:'dec_oc'},
+
+  // dec_oc → welcome (yes) and lof (no)
+  {from:'dec_oc', to:'welcome', label:'Yes — OC', color:C.welcome},
+  {from:'dec_oc', to:'lof',     label:'No — LOF', color:C.lof},
+
+  // dec_oc → dec_def (deferred check runs in parallel after OC confirmed)
+  {from:'dec_oc', to:'dec_def', label:'Yes — also', color:C.deferred, dashed:true},
+
+  // dec_def → deferred chain
+  {from:'dec_def', to:'def_3',  label:'Yes', color:C.deferred},
+
+  // deferred chain
+  {from:'def_3',  to:'def_14'},
+  {from:'def_14', to:'def_30'},
+
+  // welcome → one&done (parallel, dashed)
+  {from:'welcome', to:'np_7', label:'+ New plan', color:C.newplan, dashed:true, fromEdge:'left', toEdge:'right'},
+
+  // welcome → OC chain
+  {from:'welcome', to:'oc_76', label:'Day 76'},
+
+  // OC chain
+  {from:'oc_76', to:'oc_90'},
+  {from:'oc_90', to:'oc_120'},
+
+  // One & Done chain
+  {from:'np_7',   to:'np_45'},
+  {from:'np_45',  to:'np_105'},
+  {from:'np_105', to:'np_135'},
+  {from:'np_135', to:'np_150'},
+  {from:'np_150', to:'np_165'},
+
+  // both chains converge at dec_ret
+  {from:'oc_120',  to:'dec_ret', color:C.oc},
+  {from:'np_165',  to:'dec_ret', label:'Day 180', color:C.newplan, fromEdge:'right', toEdge:'left'},
+
+  // return vs lapsed
+  {from:'dec_ret', to:'return',   label:'Yes ✓', color:C.ret},
+  {from:'dec_ret', to:'lap_180',  label:'No', color:C.lapsed},
+
+  // lapsed chain
+  {from:'lap_180', to:'lap_210'},
+  {from:'lap_210', to:'lap_240'},
+  {from:'lap_240', to:'dec_lost'},
+
+  // return vs lost
+  {from:'dec_lost', to:'return2',   label:'Yes ✓', color:C.ret},
+  {from:'dec_lost', to:'lost_365',  label:'No', color:C.lost},
+
+  // lost chain
+  {from:'lost_365', to:'lost_545'},
+  {from:'lost_545', to:'lost_730'},
+
+  // Eblast and inspection are floating — show single dashed lines from welcome
+  {from:'welcome', to:'eblast',     label:'Parallel · Day 7+', color:C.eblast, dashed:true, fromEdge:'right', toEdge:'left'},
+  {from:'visit',   to:'inspection', label:'Indep. trigger', color:C.inspection, dashed:true, fromEdge:'right', toEdge:'top'},
+];
+
+// ─── WORLD SIZE ────────────────────────────────────────────────
+const WORLD_W = 1560;
+const WORLD_H = 1960;
+
+// ─── HELPERS ───────────────────────────────────────────────────
+const nodeMap={};
+NODES.forEach(n=>nodeMap[n.id]=n);
+
+function ncx(n){return n.x+n.w/2;}
+function ncy(n){return n.y+n.h/2;}
+function edge(n,side){
+  if(side==='top')    return {x:ncx(n), y:n.y};
+  if(side==='bottom') return {x:ncx(n), y:n.y+n.h};
+  if(side==='left')   return {x:n.x,    y:ncy(n)};
+  if(side==='right')  return {x:n.x+n.w,y:ncy(n)};
+}
+function autoEdges(a,b){
+  const dx=ncx(b)-ncx(a), dy=ncy(b)-ncy(a);
+  if(Math.abs(dy)>Math.abs(dx)*0.6){
+    return dy>0 ? ['bottom','top'] : ['top','bottom'];
+  }
+  return dx>0 ? ['right','left'] : ['left','right'];
+}
+function bezier(p1,p2){
+  const dx=p2.x-p1.x, dy=p2.y-p1.y;
+  let c1x,c1y,c2x,c2y;
+  if(Math.abs(dy)>Math.abs(dx)*0.6){
+    const bend=dy*0.5;
+    c1x=p1.x; c1y=p1.y+bend;
+    c2x=p2.x; c2y=p2.y-bend;
+  } else {
+    const bend=dx*0.5;
+    c1x=p1.x+bend; c1y=p1.y;
+    c2x=p2.x-bend; c2y=p2.y;
+  }
+  return `M${p1.x},${p1.y} C${c1x},${c1y} ${c2x},${c2y} ${p2.x},${p2.y}`;
+}
+
+// ─── RENDER ────────────────────────────────────────────────────
+let dark=false;
+function getArrowColor(col){return col||(dark?'rgba(255,255,255,.22)':'rgba(0,0,0,.22)');}
+function getLblColor(col){ return col||(dark?'rgba(255,255,255,.45)':'rgba(0,0,0,.5)'); }
+
+function render(){
+  const world=document.getElementById('world');
+  world.style.width=WORLD_W+'px';
+  world.style.height=WORLD_H+'px';
+  world.style.minHeight=WORLD_H+'px';
+  world.querySelectorAll('.tile,.lane,.lane-lbl').forEach(e=>e.remove());
+
+  const svg=document.getElementById('arrows');
+  svg.setAttribute('width',WORLD_W);
+  svg.setAttribute('height',WORLD_H);
+  svg.innerHTML='';
+
+  // DEFS — arrowheads
+  const defs=svgEl('defs');
+  const markerCols=new Set([null,...Object.values(C)]);
+  markerCols.forEach(col=>{
+    const id='ah-'+(col?col.replace('#',''):'def');
+    const m=svgEl('marker',{id,markerWidth:'8',markerHeight:'6',refX:'7',refY:'3',orient:'auto'});
+    const p=svgEl('polygon',{points:'0 0,8 3,0 6',fill:col||getArrowColor(null)});
+    m.appendChild(p); defs.appendChild(m);
+  });
+  svg.appendChild(defs);
+
+  // SWIMLANE BANDS
+  const lanes=[
+    {x:COL.NP-105,   y:315, w:214, h:660, color:C.newplan,    label:'One & Done'},
+    {x:COL.OC-105,   y:315, w:214, h:440, color:C.oc,         label:'Oil Change'},
+    {x:COL.DEF-105,  y:205, w:214, h:436, color:C.deferred,   label:'Deferred Svcs'},
+    {x:COL.OC-105,   y:1115,w:214, h:335, color:C.lapsed,     label:'Lapsed'},
+    {x:COL.OC-105,   y:1565,w:214, h:335, color:C.lost,       label:'Lost'},
+    {x:COL.RIGHT-105,y:315, w:214, h:310, color:C.inspection, label:'Independent'},
+  ];
+  lanes.forEach(l=>{
+    const d=document.createElement('div');
+    d.className='lane';
+    d.style.cssText=`left:${l.x}px;top:${l.y}px;width:${l.w}px;height:${l.h}px;background:${l.color}08;border:1px solid ${l.color}20;`;
+    world.appendChild(d);
+    const lbl=document.createElement('div');
+    lbl.className='lane-lbl';
+    lbl.style.cssText=`left:${l.x+8}px;top:${l.y+7}px;color:${l.color};`;
+    lbl.textContent=l.label;
+    world.appendChild(lbl);
+  });
+
+  // ARROWS
+  ARROWS.forEach(arr=>{
+    const a=nodeMap[arr.from], b=nodeMap[arr.to];
+    if(!a||!b) return;
+    const [ae,be]=autoEdges(a,b);
+    const p1=edge(a,arr.fromEdge||ae);
+    const p2=edge(b,arr.toEdge||be);
+    const col=arr.color||null;
+    const ahId='ah-'+(col?col.replace('#',''):'def');
+
+    const path=svgEl('path',{
+      d:bezier(p1,p2), fill:'none',
+      stroke:getArrowColor(col),
+      'stroke-width':'1.5',
+      'stroke-opacity':'0.65',
+      ...(arr.dashed?{'stroke-dasharray':'5 3'}:{}),
+      'marker-end':`url(#${ahId})`,
+    });
+    svg.appendChild(path);
+
+    if(arr.label){
+      const mx=(p1.x+p2.x)/2, my=(p1.y+p2.y)/2;
+      const bg=svgEl('rect',{x:mx-18,y:my-9,width:36,height:12,rx:'3',
+        fill:dark?'#181c26':'#f5f2ee',opacity:'0.85'});
+      svg.appendChild(bg);
+      const t=svgEl('text',{x:mx,y:my,
+        'text-anchor':'middle','dominant-baseline':'middle',
+        'font-size':'7.5','font-family':'DM Mono,monospace',
+        fill:getLblColor(col),'font-weight':'500'});
+      t.textContent=arr.label;
+      svg.appendChild(t);
+    }
+  });
+
+  // TILES
+  NODES.forEach(n=>{
+    const div=document.createElement('div');
+    const extra=n.type?` tile-${n.type}`:'';
+    div.className='tile'+extra;
+    div.style.left=n.x+'px';
+    div.style.top=n.y+'px';
+    div.style.width=n.w+'px';
+    div.style.minHeight=n.h+'px';
+
+    // Border / background styling by type
+    if(n.type==='entry'){
+      div.style.borderColor=n.color;
+    } else if(n.type==='decision'){
+      div.style.borderColor=n.color+'55';
+    } else if(n.type==='return'){
+      div.style.borderColor=n.color;
+    } else if(n.type==='inspection'){
+      div.style.borderLeft=`3px dashed ${n.color}`;
+      div.style.background=`linear-gradient(135deg,${n.color}0a,${n.color}04)`;
+    } else if(n.type==='eblast'){
+      div.style.borderLeft=`3px solid ${n.color}`;
+      div.style.background=`linear-gradient(135deg,${n.color}0a,${n.color}04)`;
+    } else {
+      div.style.borderLeft=`3px solid ${n.color}`;
+      if(n.isOCR120) div.style.borderStyle='dashed';
+    }
+
+    div.innerHTML=buildTileHTML(n);
+    div.addEventListener('click',()=>openModal(n));
+
+    // Hover glow
+    div.addEventListener('mouseenter',()=>{
+      div.style.filter=`drop-shadow(0 0 7px ${n.color}60)`;
+    });
+    div.addEventListener('mouseleave',()=>{div.style.filter='';});
+
+    world.appendChild(div);
+  });
+}
+
+function svgEl(tag,attrs={}){
+  const el=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));
+  return el;
+}
+
+function buildTileHTML(n){
+  if(n.type==='entry'){
+    return `<div class="t-label" style="color:${n.color};text-align:center;font-size:13px">${n.label}</div>
+            <div class="t-sub" style="text-align:center;margin-top:3px">${n.sub}</div>`;
+  }
+  if(n.type==='decision'){
+    return `<div style="text-align:center;font-size:8px;font-family:'DM Mono',monospace;color:${n.color};margin-bottom:4px;font-weight:600;opacity:.7">⬦ BRANCH</div>
+            <div class="t-label" style="font-size:10px;text-align:center;color:var(--muted);font-weight:500">${n.label}</div>`;
+  }
+  if(n.type==='return'){
+    return `<div class="t-label" style="color:${n.color};text-align:center;font-size:12px">${n.label}</div>
+            <div class="t-sub" style="text-align:center;margin-top:3px;font-size:9px">${n.sub}</div>`;
+  }
+  const dayHtml=n.day?`<div class="t-day">d${n.day}</div>`:'';
+  let badge='';
+  if(n.isNew) badge=`<span class="t-badge" style="background:${n.color}20;color:${n.color};border:1px solid ${n.color}44">NEW PLAN</span>`;
+  if(n.isOCR120) badge=`<span class="t-badge" style="background:rgba(163,32,187,.1);color:#a320bb;border:1px solid rgba(163,32,187,.3)">✦ REPURPOSED</span>`;
+  const eye=`<div class="t-eye" style="color:${n.color}">${n.journey}</div>`;
+  const chs=n.channels.length?`<div class="t-chs">${n.channels.map(c=>`<span class="t-ch" style="background:${CH[c]}18;color:${CH[c]}">${c.toUpperCase()}</span>`).join('')}</div>`:'';
+  const upips=n.urgency?`<div class="t-upips">${[1,2,3,4,5].map(i=>`<div class="t-upip" style="background:${i<=n.urgency?n.color:'var(--faint)'}"></div>`).join('')}</div>`:'';
+  return `${dayHtml}${eye}${badge}<div class="t-label">${n.label}</div><div class="t-sub">${n.sub}</div>${chs}${upips}`;
+}
+
+// ─── MODAL ─────────────────────────────────────────────────────
+function openModal(n){
+  set('mBar','style.background',n.color);
+  setHtml('mEw',`<span style="color:${n.color}">${n.journey}${n.day?' · Day '+n.day:''}</span>`);
+  setHtml('mTitle',`<span style="color:${n.color}">${n.label}</span>`);
+  setText('mPurp',n.purpose||'');
+  show('mPurpWrap',!!n.purpose);
+
+  show('mUrgWrap',!!n.urgencyArc);
+  if(n.urgencyArc){
+    setText('mUrg',n.urgencyArc);
+    document.getElementById('mUBar').innerHTML=[1,2,3,4,5].map(i=>
+      `<div class="u-pip" style="background:${i<=(n.urgency||0)?n.color:'var(--faint)'}"></div>`).join('');
+  }
+
+  show('mTokWrap',!!(n.tokens&&n.tokens.length));
+  if(n.tokens) document.getElementById('mToks').innerHTML=n.tokens.map(t=>`<span class="m-tok">[${t}]</span>`).join('');
+
+  document.getElementById('mChs').innerHTML=n.channels.length
+    ?n.channels.map(c=>`<span class="m-ch" style="background:${CH[c]}18;color:${CH[c]};border:1px solid ${CH[c]}33">${c.toUpperCase()}</span>`).join('')
+    :'<span style="font-size:11px;color:var(--muted)">—</span>';
+
+  const sms=n.smsDay&&SMS[n.smsDay];
+  show('mSmsWrap',!!sms);
+  if(sms){
+    const ebrTxt=sms.ebr.startsWith('ALL')
+      ?'All customers receive the opt-in version — transactional proximity covers EBR.'
+      :sms.ebr;
+    setText('mSmsEbr',ebrTxt);
+    setText('mSmsOptin',sms.optin);
+  }
+
+  show('mHandWrap',!!n.handoff);
+  if(n.handoff) setText('mHand',n.handoff);
+
+  document.getElementById('overlay').classList.add('on');
+}
+function set(id,prop,val){const el=document.getElementById(id);if(!el)return;const parts=prop.split('.');let o=el;parts.forEach((p,i)=>{if(i===parts.length-1)o[p]=val;else o=o[p];});}
+function setHtml(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html;}
+function setText(id,t){const el=document.getElementById(id);if(el)el.textContent=t;}
+function show(id,vis){const el=document.getElementById(id);if(el)el.style.display=vis?'block':'none';}
+
+document.getElementById('mClose').addEventListener('click',()=>document.getElementById('overlay').classList.remove('on'));
+document.getElementById('overlay').addEventListener('click',e=>{if(e.target===document.getElementById('overlay'))document.getElementById('overlay').classList.remove('on');});
+
+// ─── DRAG TO PAN ───────────────────────────────────────────────
+(function(){
+  const vp=document.getElementById('viewport');
+  let dragging=false,sx=0,sy=0,sleft=0,stop=0;
+  vp.addEventListener('mousedown',e=>{
+    if(e.target.closest('.tile'))return;
+    dragging=true; sx=e.clientX; sy=e.clientY;
+    sleft=vp.scrollLeft; stop=vp.scrollTop;
+    vp.classList.add('dragging');
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    vp.scrollLeft=sleft-(e.clientX-sx);
+    vp.scrollTop=stop-(e.clientY-sy);
+  });
+  document.addEventListener('mouseup',()=>{dragging=false;vp.classList.remove('dragging');});
+})();
+
+// ─── ZOOM (center-preserving, scroller-based) ─────────────────
+let scale=1;
+
+function applyScale(s, pivotVpX, pivotVpY){
+  const vp=document.getElementById('viewport');
+  const world=document.getElementById('world');
+  const scroller=document.getElementById('scroller');
+
+  // Capture pivot in world-space before changing scale
+  const worldRect=world.getBoundingClientRect();
+  const vpRect=vp.getBoundingClientRect();
+  const px=pivotVpX!==undefined?pivotVpX:vp.clientWidth/2;
+  const py=pivotVpY!==undefined?pivotVpY:vp.clientHeight/2;
+  const wx=(px-(worldRect.left-vpRect.left))/scale;
+  const wy=(py-(worldRect.top -vpRect.top ))/scale;
+
+  scale=Math.max(0.3,Math.min(2.2,s));
+  world.style.transform=`scale(${scale})`;
+  world.style.transformOrigin='top center';
+
+  // Size scroller so scrollbars accurately reflect scaled content
+  const sw=Math.max(WORLD_W*scale+40, vp.clientWidth);
+  const sh=WORLD_H*scale+40;
+  scroller.style.width=sw+'px';
+  scroller.style.height=sh+'px';
+
+  // Re-scroll so the same world point stays under the pivot
+  requestAnimationFrame(()=>{
+    const nwRect=world.getBoundingClientRect();
+    const nvRect=vp.getBoundingClientRect();
+    const nwl=nwRect.left-nvRect.left+vp.scrollLeft;
+    const nwt=nwRect.top -nvRect.top +vp.scrollTop;
+    vp.scrollLeft=nwl+wx*scale-px;
+    vp.scrollTop =nwt+wy*scale-py;
+  });
+}
+
+document.getElementById('zIn').addEventListener('click',()=>applyScale(scale+0.12));
+document.getElementById('zOut').addEventListener('click',()=>applyScale(scale-0.12));
+
+document.getElementById('viewport').addEventListener('wheel',e=>{
+  if(!e.ctrlKey&&!e.metaKey) return;
+  e.preventDefault();
+  const r=document.getElementById('viewport').getBoundingClientRect();
+  applyScale(scale*(e.deltaY<0?1.1:0.9), e.clientX-r.left, e.clientY-r.top);
+},{passive:false});
+
+const _fitBtn = document.getElementById('fitBtn');
+if(_fitBtn) _fitBtn.addEventListener('click',()=>{
+  const vp=document.getElementById('viewport');
+  const s=Math.min(vp.clientWidth/WORLD_W, vp.clientHeight/WORLD_H)*0.94;
+  scale=s;
+  const world=document.getElementById('world');
+  const scroller=document.getElementById('scroller');
+  world.style.transform=`scale(${s})`;
+  world.style.transformOrigin='top center';
+  scroller.style.width=Math.max(WORLD_W*s+40,vp.clientWidth)+'px';
+  scroller.style.height=(WORLD_H*s+40)+'px';
+  vp.scrollTo({top:0,left:0,behavior:'instant'});
+});
+
+// ─── THEME ─────────────────────────────────────────────────────
+const _flThemeBtn = document.getElementById('themeBtn');
+if(_flThemeBtn) _flThemeBtn.addEventListener('click',function(){
+  dark=!dark;
+  document.documentElement.classList.toggle('dark',dark);
+  this.textContent=dark?'☀ Light':'☾ Dark';
+  render();
+  // Re-apply current scale after re-render
+  const world=document.getElementById('world');
+  world.style.transform=`scale(${scale})`;
+  world.style.transformOrigin='top center';
+});
+
+// ─── INIT ──────────────────────────────────────────────────────
+render();
+setTimeout(()=>{
+  const vp=document.getElementById('viewport');
+  const s=Math.min(vp.clientWidth/WORLD_W, vp.clientHeight/WORLD_H)*0.9;
+  scale=s;
+  const world=document.getElementById('world');
+  const scroller=document.getElementById('scroller');
+  world.style.transform=`scale(${s})`;
+  world.style.transformOrigin='top center';
+  scroller.style.width=Math.max(WORLD_W*s+40,vp.clientWidth)+'px';
+  scroller.style.height=(WORLD_H*s+40)+'px';
+  vp.scrollTo({top:0,left:0});
+},80);
+</script>
+</div><!-- end #panel-flow -->
+
+<!-- ── SHARED VIEW SWITCHER JS ── -->
+<script>
+let currentView = 'timeline';
+
+function switchView(view) {
+  if (view === currentView) return;
+  currentView = view;
+
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+
+  document.getElementById('panel-' + view).classList.add('active');
+  document.getElementById('tab-' + view).classList.add('active');
+
+  // If switching to flow, trigger a fit + render in case it hasn't initialized
+  if (view === 'flow') {
+    setTimeout(() => {
+      if (typeof render === 'function') render();
+      const vp = document.getElementById('viewport');
+      if (vp && typeof applyScale === 'function') {
+        const s = Math.min(vp.clientWidth / WORLD_W, vp.clientHeight / WORLD_H) * 0.9;
+        scale = s;
+        const world = document.getElementById('world');
+        const scroller = document.getElementById('scroller');
+        if (world) { world.style.transform = `scale(${s})`; world.style.transformOrigin = 'top center'; }
+        if (scroller) { scroller.style.width = Math.max(WORLD_W*s+40, vp.clientWidth)+'px'; scroller.style.height = (WORLD_H*s+40)+'px'; }
+        vp.scrollTo({top:0, left:0});
+      }
+    }, 50);
+  }
+  if (view === 'timeline') {
+    setTimeout(() => { if (typeof build === 'function') build(); }, 50);
+  }
+}
+
+// ── SHARED THEME ──
+// Both panels listen for theme changes via :root.dark class
+// We override each panel's individual theme toggle to use this shared one instead
+document.getElementById('sharedThemeToggle').addEventListener('click', function() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  this.textContent = isDark ? '☀ Light' : '☾ Dark';
+
+  // Sync timeline theme state
+  if (typeof currentTheme !== 'undefined') {
+    currentTheme = isDark ? 'dark' : 'light';
+    if (typeof applyTheme === 'function') applyTheme(currentTheme);
+  }
+
+  // Sync flow theme state
+  if (typeof dark !== 'undefined') {
+    dark = isDark;
+    if (typeof render === 'function' && currentView === 'flow') render();
+  }
+});
+
+// Hide the individual theme toggles from each panel — shared one handles it
+document.addEventListener('DOMContentLoaded', () => {
+  const tl = document.getElementById('themeToggle');
+  if (tl) tl.style.display = 'none';
+  const fl = document.getElementById('themeBtn');
+  if (fl) fl.style.display = 'none';
+});
+</script>
+
+</body>
+</html>
