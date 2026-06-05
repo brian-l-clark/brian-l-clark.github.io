@@ -488,15 +488,18 @@
       position: relative;
     }
     .map-card {
+      display: block;
+      text-decoration: none;
       background: #0f172a;
       border-radius: 16px;
       padding: 1.5rem;
       box-shadow: 0 24px 80px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.12);
-      transform: perspective(1000px) rotateY(-4deg) rotateX(2deg);
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      transform: perspective(1000px) rotateY(0deg) rotateX(0deg);
+      transition: box-shadow 0.15s ease;
+      cursor: pointer;
+      will-change: transform;
     }
-    .lifecycle-right:hover .map-card {
-      transform: perspective(1000px) rotateY(-1deg) rotateX(0.5deg);
+    .map-card:hover {
       box-shadow: 0 32px 100px rgba(0,0,0,0.28), 0 8px 24px rgba(0,0,0,0.14);
     }
     .map-topbar {
@@ -763,10 +766,10 @@
     <div class="nav-inner">
       <a href="#hero" class="nav-logo">Brian Clark</a>
       <ul class="nav-links">
+        <li><a href="#lifecycle">Lifecycle Map</a></li>
         <li><a href="#metrics">Results</a></li>
         <li><a href="#approach">Approach</a></li>
         <li><a href="#cases">Work</a></li>
-        <li><a href="#lifecycle">Lifecycle Map</a></li>
         <li><a href="#skills">Skills</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -799,6 +802,128 @@
         <span class="hero-tag">Salesforce</span>
         <span class="hero-tag">Cinch CRM</span>
         <span class="hero-tag">4M+ Record Databases</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIFECYCLE MAP -->
+  <section id="lifecycle">
+    <div class="container">
+      <div class="lifecycle-split">
+
+        <!-- LEFT: text + CTA -->
+        <div class="lifecycle-left reveal">
+          <p class="section-label">Live work sample</p>
+          <h2>Customer Lifecycle Journey Map.</h2>
+          <p>The actual system I built at FullSpeed Automotive — 8 journeys, 2+ years of touchpoints, email and SMS mapped from first visit to win-back. Two interactive views: a scrollable timeline and a process flow diagram.</p>
+          <ul class="lifecycle-bullets">
+            <li>8 journeys from Welcome to Lost Customer re-engagement <span></span></li>
+            <li>Every touchpoint clickable — full copy, timing logic, and trigger conditions <span></span></li>
+            <li>Filter by journey or channel; toggle eblast suppression windows <span></span></li>
+            <li>Timeline and flow-diagram views in one tool <span></span></li>
+          </ul>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.75rem;">
+            <span class="lifecycle-badge blue">Welcome</span>
+            <span class="lifecycle-badge green">Oil Change</span>
+            <span class="lifecycle-badge orange">Convert LOF</span>
+            <span class="lifecycle-badge gold">Deferred Svcs</span>
+            <span class="lifecycle-badge red">Lapsed</span>
+            <span class="lifecycle-badge purple">Lost Customer</span>
+          </div>
+          <a href="lifecycle.html" target="_blank" rel="noopener" class="btn btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Open interactive map
+          </a>
+        </div>
+
+        <!-- RIGHT: CSS map illustration -->
+        <div class="lifecycle-right reveal reveal-delay-2">
+          <a href="lifecycle.html" target="_blank" rel="noopener" class="map-card" id="mapCard">
+            <div class="map-topbar">
+              <div>
+                <div class="map-title">Customer Lifecycle Journey Map</div>
+                <div class="map-title-sub">Day 0 → 2 years · 8 journeys · Email + SMS</div>
+              </div>
+              <div class="map-tabs">
+                <div class="map-tab active">Timeline</div>
+                <div class="map-tab">Flow</div>
+              </div>
+            </div>
+
+            <div class="map-grid">
+              <div class="map-row">
+                <div class="map-row-label">Welcome</div>
+                <div class="map-track" style="background:rgba(29,108,196,0.08)">
+                  <div class="map-connector" style="left:0;right:0;"></div>
+                  <div class="map-dot both pulse" style="left:2%">E</div>
+                  <div class="map-dot email" style="left:14%">E</div>
+                  <div class="map-dot sms" style="left:26%">S</div>
+                  <div class="map-dot email" style="left:40%">E</div>
+                </div>
+              </div>
+              <div class="map-row">
+                <div class="map-row-label">Oil Change</div>
+                <div class="map-track" style="background:rgba(13,143,95,0.08)">
+                  <div class="map-connector" style="left:0;right:0;"></div>
+                  <div class="map-dot email" style="left:30%">E</div>
+                  <div class="map-dot sms" style="left:44%">S</div>
+                  <div class="map-dot both" style="left:58%">E</div>
+                  <div class="map-dot email" style="left:70%">E</div>
+                </div>
+              </div>
+              <div class="map-row">
+                <div class="map-row-label">Convert</div>
+                <div class="map-track" style="background:rgba(196,90,10,0.08)">
+                  <div class="map-connector" style="left:0;right:0;"></div>
+                  <div class="map-dot email" style="left:20%">E</div>
+                  <div class="map-dot sms" style="left:36%">S</div>
+                  <div class="map-dot email" style="left:52%">E</div>
+                </div>
+              </div>
+              <div class="map-row">
+                <div class="map-row-label">Deferred</div>
+                <div class="map-track" style="background:rgba(160,122,0,0.08)">
+                  <div class="map-connector" style="left:0;right:0;"></div>
+                  <div class="map-dot both" style="left:10%">E</div>
+                  <div class="map-dot email" style="left:24%">E</div>
+                  <div class="map-dot sms" style="left:38%">S</div>
+                </div>
+              </div>
+              <div class="map-row">
+                <div class="map-row-label">Lapsed</div>
+                <div class="map-track" style="background:rgba(192,24,10,0.08)">
+                  <div class="map-connector" style="left:0;right:0;"></div>
+                  <div class="map-dot email" style="left:55%">E</div>
+                  <div class="map-dot sms" style="left:67%">S</div>
+                  <div class="map-dot email" style="left:79%">E</div>
+                </div>
+              </div>
+              <div class="map-row">
+                <div class="map-row-label">Lost</div>
+                <div class="map-track" style="background:rgba(107,61,224,0.08)">
+                  <div class="map-connector" style="left:0;right:0;"></div>
+                  <div class="map-dot both" style="left:68%">E</div>
+                  <div class="map-dot sms" style="left:80%">S</div>
+                  <div class="map-dot email pulse" style="left:91%">E</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="map-legend">
+              <div class="map-legend-item"><div class="map-legend-dot" style="background:#2563eb"></div> Email</div>
+              <div class="map-legend-item"><div class="map-legend-dot" style="background:#059669"></div> SMS</div>
+              <div class="map-legend-item"><div class="map-legend-dot" style="background:#7c3aed"></div> Email + SMS</div>
+            </div>
+
+            <div class="map-stat-row">
+              <div class="map-stat"><strong>8</strong><span>Journeys</span></div>
+              <div class="map-stat"><strong>25+</strong><span>SMS touches</span></div>
+              <div class="map-stat"><strong>2 yrs</strong><span>Timeline</span></div>
+              <div class="map-stat"><strong>40+</strong><span>Campaigns/yr</span></div>
+            </div>
+          </a>
+        </div>
+
       </div>
     </div>
   </section>
@@ -954,134 +1079,6 @@
     </div>
   </section>
 
-  <!-- LIFECYCLE MAP -->
-  <section id="lifecycle">
-    <div class="container">
-      <div class="lifecycle-split">
-
-        <!-- LEFT: text + CTA -->
-        <div class="lifecycle-left reveal">
-          <p class="section-label">Live work sample</p>
-          <h2>Customer Lifecycle Journey Map.</h2>
-          <p>The actual system I built at FullSpeed Automotive — 8 journeys, 2+ years of touchpoints, email and SMS mapped from first visit to win-back. Two interactive views: a scrollable timeline and a process flow diagram.</p>
-          <ul class="lifecycle-bullets">
-            <li>8 journeys from Welcome to Lost Customer re-engagement <span></span></li>
-            <li>Every touchpoint clickable — full copy, timing logic, and trigger conditions <span></span></li>
-            <li>Filter by journey or channel; toggle eblast suppression windows <span></span></li>
-            <li>Timeline and flow-diagram views in one tool <span></span></li>
-          </ul>
-          <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.75rem;">
-            <span class="lifecycle-badge blue">Welcome</span>
-            <span class="lifecycle-badge green">Oil Change</span>
-            <span class="lifecycle-badge orange">Convert LOF</span>
-            <span class="lifecycle-badge gold">Deferred Svcs</span>
-            <span class="lifecycle-badge red">Lapsed</span>
-            <span class="lifecycle-badge purple">Lost Customer</span>
-          </div>
-          <a href="lifecycle.html" target="_blank" rel="noopener" class="btn btn-primary">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Open interactive map
-          </a>
-        </div>
-
-        <!-- RIGHT: CSS map illustration -->
-        <div class="lifecycle-right reveal reveal-delay-2">
-          <div class="map-card">
-            <div class="map-topbar">
-              <div>
-                <div class="map-title">Customer Lifecycle Journey Map</div>
-                <div class="map-title-sub">Day 0 → 2 years · 8 journeys · Email + SMS</div>
-              </div>
-              <div class="map-tabs">
-                <div class="map-tab active">Timeline</div>
-                <div class="map-tab">Flow</div>
-              </div>
-            </div>
-
-            <div class="map-grid">
-              <!-- Welcome -->
-              <div class="map-row">
-                <div class="map-row-label">Welcome</div>
-                <div class="map-track" style="background:rgba(29,108,196,0.08)">
-                  <div class="map-connector" style="left:0;right:0;"></div>
-                  <div class="map-dot both pulse" style="left:2%">E</div>
-                  <div class="map-dot email" style="left:14%">E</div>
-                  <div class="map-dot sms" style="left:26%">S</div>
-                  <div class="map-dot email" style="left:40%">E</div>
-                </div>
-              </div>
-              <!-- Oil Change -->
-              <div class="map-row">
-                <div class="map-row-label">Oil Change</div>
-                <div class="map-track" style="background:rgba(13,143,95,0.08)">
-                  <div class="map-connector" style="left:0;right:0;"></div>
-                  <div class="map-dot email" style="left:30%">E</div>
-                  <div class="map-dot sms" style="left:44%">S</div>
-                  <div class="map-dot both" style="left:58%">E</div>
-                  <div class="map-dot email" style="left:70%">E</div>
-                </div>
-              </div>
-              <!-- Convert LOF -->
-              <div class="map-row">
-                <div class="map-row-label">Convert</div>
-                <div class="map-track" style="background:rgba(196,90,10,0.08)">
-                  <div class="map-connector" style="left:0;right:0;"></div>
-                  <div class="map-dot email" style="left:20%">E</div>
-                  <div class="map-dot sms" style="left:36%">S</div>
-                  <div class="map-dot email" style="left:52%">E</div>
-                </div>
-              </div>
-              <!-- Deferred -->
-              <div class="map-row">
-                <div class="map-row-label">Deferred</div>
-                <div class="map-track" style="background:rgba(160,122,0,0.08)">
-                  <div class="map-connector" style="left:0;right:0;"></div>
-                  <div class="map-dot both" style="left:10%">E</div>
-                  <div class="map-dot email" style="left:24%">E</div>
-                  <div class="map-dot sms" style="left:38%">S</div>
-                </div>
-              </div>
-              <!-- Lapsed -->
-              <div class="map-row">
-                <div class="map-row-label">Lapsed</div>
-                <div class="map-track" style="background:rgba(192,24,10,0.08)">
-                  <div class="map-connector" style="left:0;right:0;"></div>
-                  <div class="map-dot email" style="left:55%">E</div>
-                  <div class="map-dot sms" style="left:67%">S</div>
-                  <div class="map-dot email" style="left:79%">E</div>
-                </div>
-              </div>
-              <!-- Lost -->
-              <div class="map-row">
-                <div class="map-row-label">Lost</div>
-                <div class="map-track" style="background:rgba(107,61,224,0.08)">
-                  <div class="map-connector" style="left:0;right:0;"></div>
-                  <div class="map-dot both" style="left:68%">E</div>
-                  <div class="map-dot sms" style="left:80%">S</div>
-                  <div class="map-dot email pulse" style="left:91%">E</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="map-legend">
-              <div class="map-legend-item"><div class="map-legend-dot" style="background:#2563eb"></div> Email</div>
-              <div class="map-legend-item"><div class="map-legend-dot" style="background:#059669"></div> SMS</div>
-              <div class="map-legend-item"><div class="map-legend-dot" style="background:#7c3aed"></div> Email + SMS</div>
-            </div>
-
-            <div class="map-stat-row">
-              <div class="map-stat"><strong>8</strong><span>Journeys</span></div>
-              <div class="map-stat"><strong>25+</strong><span>SMS touches</span></div>
-              <div class="map-stat"><strong>2 yrs</strong><span>Timeline</span></div>
-              <div class="map-stat"><strong>40+</strong><span>Campaigns/yr</span></div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
   <!-- SKILLS -->
   <section id="skills">
     <div class="container">
@@ -1216,6 +1213,21 @@
     }, { threshold: 0.5 });
 
     document.querySelectorAll('.count').forEach(el => countObserver.observe(el));
+
+    // ---- MAP CARD TILT (follows mouse across full page) ----
+    const mapCard = document.getElementById('mapCard');
+    if (mapCard) {
+      document.addEventListener('mousemove', (e) => {
+        const rect = mapCard.getBoundingClientRect();
+        const cardCX = rect.left + rect.width / 2;
+        const cardCY = rect.top + rect.height / 2;
+        const dx = (e.clientX - cardCX) / window.innerWidth;
+        const dy = (e.clientY - cardCY) / window.innerHeight;
+        const rotY = dx * 14;
+        const rotX = -dy * 10;
+        mapCard.style.transform = `perspective(1000px) rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+      });
+    }
   </script>
 
 </body>
