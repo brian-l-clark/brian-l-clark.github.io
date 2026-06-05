@@ -443,144 +443,203 @@
     .lifecycle-badge.red    { color: #c0180a; background: rgba(192,24,10,.08);  border-color: rgba(192,24,10,.25); }
     .lifecycle-badge.gray   { color: var(--muted); background: var(--surface);  border-color: var(--border); }
 
-    .lifecycle-launch-btn {
-      display: inline-flex;
+    /* ---- LIFECYCLE SPLIT LAYOUT ---- */
+    .lifecycle-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.7rem 1.4rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-decoration: none;
-      color: #fff;
+    }
+    .lifecycle-left {}
+    .lifecycle-left h2 { margin-bottom: 1rem; }
+    .lifecycle-left p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+    .lifecycle-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 2.25rem;
+    }
+    .lifecycle-bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+    .lifecycle-bullets li::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
       background: var(--accent);
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
       flex-shrink: 0;
+      margin-top: 0.45em;
     }
-    .lifecycle-launch-btn:hover {
-      background: var(--accent-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(37, 99, 235, 0.3);
-    }
-    .lifecycle-launch-btn svg {
-      width: 14px; height: 14px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
+    .lifecycle-bullets li span { color: var(--muted); font-weight: 400; }
 
-    .lifecycle-preview-wrap {
+    /* ---- MAP ILLUSTRATION ---- */
+    .lifecycle-right {
       position: relative;
+    }
+    .map-card {
+      background: #0f172a;
       border-radius: 16px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 40px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
-      background: #f5f2ee;
-      transition: box-shadow 0.3s, transform 0.3s;
+      padding: 1.5rem;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.12);
+      transform: perspective(1000px) rotateY(-4deg) rotateX(2deg);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
-    .lifecycle-preview-wrap:hover {
-      box-shadow: 0 12px 60px rgba(37, 99, 235, 0.12), 0 2px 8px rgba(0,0,0,0.06);
-      transform: translateY(-3px);
+    .lifecycle-right:hover .map-card {
+      transform: perspective(1000px) rotateY(-1deg) rotateX(0.5deg);
+      box-shadow: 0 32px 100px rgba(0,0,0,0.28), 0 8px 24px rgba(0,0,0,0.14);
     }
-    .lifecycle-browser-bar {
-      background: #f0ece6;
-      border-bottom: 1px solid rgba(0,0,0,0.1);
-      padding: 0.65rem 1rem;
+    .map-topbar {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
     }
-    .lifecycle-browser-dots { display: flex; gap: 5px; }
-    .lifecycle-browser-dots span {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      display: block;
+    .map-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      letter-spacing: -0.01em;
     }
-    .lifecycle-browser-dots span:nth-child(1) { background: #fc635d; }
-    .lifecycle-browser-dots span:nth-child(2) { background: #fdbc40; }
-    .lifecycle-browser-dots span:nth-child(3) { background: #34c749; }
-    .lifecycle-browser-url {
+    .map-title-sub {
+      font-size: 0.65rem;
+      color: #64748b;
+      margin-top: 0.1rem;
+    }
+    .map-tabs {
+      display: flex;
+      gap: 0.4rem;
+    }
+    .map-tab {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 5px;
+      color: #94a3b8;
+      background: rgba(255,255,255,0.05);
+    }
+    .map-tab.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .map-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .map-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .map-row-label {
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: #475569;
+      width: 52px;
+      flex-shrink: 0;
+      text-align: right;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .map-track {
       flex: 1;
-      font-size: 0.72rem;
-      color: #8a8078;
-      font-family: 'Courier New', monospace;
-      background: rgba(0,0,0,0.06);
-      border-radius: 4px;
-      padding: 0.18rem 0.6rem;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+      height: 28px;
+      border-radius: 6px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: visible;
     }
-    .lifecycle-iframe {
-      width: 100%;
-      height: 580px;
-      border: none;
-      display: block;
-      pointer-events: none;
-    }
-    .lifecycle-overlay-btn {
+    .map-dot {
+      width: 22px; height: 22px;
+      border-radius: 50%;
       position: absolute;
-      inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(15, 23, 42, 0.0);
-      transition: background 0.25s;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    .lifecycle-overlay-btn:hover { background: rgba(15, 23, 42, 0.35); }
-    .lifecycle-overlay-btn .overlay-cta {
-      opacity: 0;
-      transform: scale(0.9);
-      transition: opacity 0.2s, transform 0.2s;
-      background: #fff;
-      color: var(--accent);
-      font-size: 0.9rem;
+      font-size: 0.5rem;
       font-weight: 700;
-      padding: 0.75rem 1.75rem;
-      border-radius: 100px;
+      color: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      border: 2px solid rgba(255,255,255,0.15);
+    }
+    .map-dot.email { background: #2563eb; }
+    .map-dot.sms   { background: #059669; }
+    .map-dot.both  { background: #7c3aed; }
+    .map-dot.pulse {
+      animation: mapPulse 2.8s ease-in-out infinite;
+    }
+    @keyframes mapPulse {
+      0%, 100% { box-shadow: 0 2px 6px rgba(0,0,0,0.3), 0 0 0 0 rgba(37,99,235,0.5); }
+      50% { box-shadow: 0 2px 6px rgba(0,0,0,0.3), 0 0 0 6px rgba(37,99,235,0); }
+    }
+    .map-connector {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+      top: 50%;
+    }
+    .map-legend {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.1rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .map-legend-item {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      gap: 0.35rem;
+      font-size: 0.6rem;
+      color: #64748b;
+      font-weight: 500;
     }
-    .lifecycle-overlay-btn:hover .overlay-cta {
-      opacity: 1;
-      transform: scale(1);
+    .map-legend-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
     }
-    .lifecycle-features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 2rem;
+    .map-stat-row {
+      display: flex;
+      gap: 1.25rem;
+      margin-top: 1rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
     }
-    .lifecycle-feature {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.25rem;
-      transition: border-color 0.2s, transform 0.2s;
+    .map-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
     }
-    .lifecycle-feature:hover {
-      border-color: var(--accent-mid);
-      transform: translateY(-2px);
+    .map-stat strong {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #e2e8f0;
+      letter-spacing: -0.03em;
     }
-    .lifecycle-feature-icon { font-size: 1.2rem; margin-bottom: 0.5rem; }
-    .lifecycle-feature h4 {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 0.25rem;
+    .map-stat span {
+      font-size: 0.58rem;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
     }
-    .lifecycle-feature p {
-      font-size: 0.76rem;
-      color: var(--muted);
-      line-height: 1.55;
+
+    @media (max-width: 900px) {
+      .lifecycle-split { grid-template-columns: 1fr; gap: 3rem; }
+      .map-card { transform: none; }
     }
 
     /* ---- SKILLS ---- */
@@ -898,74 +957,127 @@
   <!-- LIFECYCLE MAP -->
   <section id="lifecycle">
     <div class="container">
-      <div class="lifecycle-header reveal">
-        <div class="lifecycle-header-text">
+      <div class="lifecycle-split">
+
+        <!-- LEFT: text + CTA -->
+        <div class="lifecycle-left reveal">
           <p class="section-label">Live work sample</p>
           <h2>Customer Lifecycle Journey Map.</h2>
-          <p class="section-intro" style="margin-bottom:0">
-            The actual system I built at FullSpeed Automotive. Eight journeys, 2+ years of touchpoints,
-            email and SMS mapped across every stage from first visit to win-back. Two interactive views:
-            a scrollable timeline and a process flow diagram.
-          </p>
-          <div class="lifecycle-meta">
+          <p>The actual system I built at FullSpeed Automotive — 8 journeys, 2+ years of touchpoints, email and SMS mapped from first visit to win-back. Two interactive views: a scrollable timeline and a process flow diagram.</p>
+          <ul class="lifecycle-bullets">
+            <li>8 journeys from Welcome to Lost Customer re-engagement <span></span></li>
+            <li>Every touchpoint clickable — full copy, timing logic, and trigger conditions <span></span></li>
+            <li>Filter by journey or channel; toggle eblast suppression windows <span></span></li>
+            <li>Timeline and flow-diagram views in one tool <span></span></li>
+          </ul>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap; margin-bottom:1.75rem;">
             <span class="lifecycle-badge blue">Welcome</span>
-            <span class="lifecycle-badge green">Oil Change Reminder</span>
+            <span class="lifecycle-badge green">Oil Change</span>
             <span class="lifecycle-badge orange">Convert LOF</span>
-            <span class="lifecycle-badge gold">Deferred Services</span>
+            <span class="lifecycle-badge gold">Deferred Svcs</span>
             <span class="lifecycle-badge red">Lapsed</span>
             <span class="lifecycle-badge purple">Lost Customer</span>
-            <span class="lifecycle-badge gray">8 journeys · Day 0 → 2 years · Email + SMS</span>
           </div>
-        </div>
-        <a href="lifecycle.html" target="_blank" rel="noopener" class="lifecycle-launch-btn">
-          <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          Open full screen
-        </a>
-      </div>
-
-      <div class="lifecycle-preview-wrap reveal">
-        <div class="lifecycle-browser-bar">
-          <div class="lifecycle-browser-dots">
-            <span></span><span></span><span></span>
-          </div>
-          <div class="lifecycle-browser-url">brian-l-clark.github.io/lifecycle.html</div>
-        </div>
-        <iframe
-          src="lifecycle.html"
-          class="lifecycle-iframe"
-          title="Customer Lifecycle Journey Map"
-          loading="lazy"
-          scrolling="no"
-        ></iframe>
-        <a href="lifecycle.html" target="_blank" rel="noopener" class="lifecycle-overlay-btn" aria-label="Open lifecycle map full screen">
-          <span class="overlay-cta">
+          <a href="lifecycle.html" target="_blank" rel="noopener" class="btn btn-primary">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Open full screen
-          </span>
-        </a>
-      </div>
+            Open interactive map
+          </a>
+        </div>
 
-      <div class="lifecycle-features">
-        <div class="lifecycle-feature reveal reveal-delay-1">
-          <div class="lifecycle-feature-icon">⟷</div>
-          <h4>Timeline View</h4>
-          <p>Horizontal scroll across Day 0 to 2+ years. Filter by journey or channel. Zoom in on any segment.</p>
+        <!-- RIGHT: CSS map illustration -->
+        <div class="lifecycle-right reveal reveal-delay-2">
+          <div class="map-card">
+            <div class="map-topbar">
+              <div>
+                <div class="map-title">Customer Lifecycle Journey Map</div>
+                <div class="map-title-sub">Day 0 → 2 years · 8 journeys · Email + SMS</div>
+              </div>
+              <div class="map-tabs">
+                <div class="map-tab active">Timeline</div>
+                <div class="map-tab">Flow</div>
+              </div>
+            </div>
+
+            <div class="map-grid">
+              <!-- Welcome -->
+              <div class="map-row">
+                <div class="map-row-label">Welcome</div>
+                <div class="map-track" style="background:rgba(29,108,196,0.08)">
+                  <div class="map-connector" style="left:0;right:0;"></div>
+                  <div class="map-dot both pulse" style="left:2%">E</div>
+                  <div class="map-dot email" style="left:14%">E</div>
+                  <div class="map-dot sms" style="left:26%">S</div>
+                  <div class="map-dot email" style="left:40%">E</div>
+                </div>
+              </div>
+              <!-- Oil Change -->
+              <div class="map-row">
+                <div class="map-row-label">Oil Change</div>
+                <div class="map-track" style="background:rgba(13,143,95,0.08)">
+                  <div class="map-connector" style="left:0;right:0;"></div>
+                  <div class="map-dot email" style="left:30%">E</div>
+                  <div class="map-dot sms" style="left:44%">S</div>
+                  <div class="map-dot both" style="left:58%">E</div>
+                  <div class="map-dot email" style="left:70%">E</div>
+                </div>
+              </div>
+              <!-- Convert LOF -->
+              <div class="map-row">
+                <div class="map-row-label">Convert</div>
+                <div class="map-track" style="background:rgba(196,90,10,0.08)">
+                  <div class="map-connector" style="left:0;right:0;"></div>
+                  <div class="map-dot email" style="left:20%">E</div>
+                  <div class="map-dot sms" style="left:36%">S</div>
+                  <div class="map-dot email" style="left:52%">E</div>
+                </div>
+              </div>
+              <!-- Deferred -->
+              <div class="map-row">
+                <div class="map-row-label">Deferred</div>
+                <div class="map-track" style="background:rgba(160,122,0,0.08)">
+                  <div class="map-connector" style="left:0;right:0;"></div>
+                  <div class="map-dot both" style="left:10%">E</div>
+                  <div class="map-dot email" style="left:24%">E</div>
+                  <div class="map-dot sms" style="left:38%">S</div>
+                </div>
+              </div>
+              <!-- Lapsed -->
+              <div class="map-row">
+                <div class="map-row-label">Lapsed</div>
+                <div class="map-track" style="background:rgba(192,24,10,0.08)">
+                  <div class="map-connector" style="left:0;right:0;"></div>
+                  <div class="map-dot email" style="left:55%">E</div>
+                  <div class="map-dot sms" style="left:67%">S</div>
+                  <div class="map-dot email" style="left:79%">E</div>
+                </div>
+              </div>
+              <!-- Lost -->
+              <div class="map-row">
+                <div class="map-row-label">Lost</div>
+                <div class="map-track" style="background:rgba(107,61,224,0.08)">
+                  <div class="map-connector" style="left:0;right:0;"></div>
+                  <div class="map-dot both" style="left:68%">E</div>
+                  <div class="map-dot sms" style="left:80%">S</div>
+                  <div class="map-dot email pulse" style="left:91%">E</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="map-legend">
+              <div class="map-legend-item"><div class="map-legend-dot" style="background:#2563eb"></div> Email</div>
+              <div class="map-legend-item"><div class="map-legend-dot" style="background:#059669"></div> SMS</div>
+              <div class="map-legend-item"><div class="map-legend-dot" style="background:#7c3aed"></div> Email + SMS</div>
+            </div>
+
+            <div class="map-stat-row">
+              <div class="map-stat"><strong>8</strong><span>Journeys</span></div>
+              <div class="map-stat"><strong>25+</strong><span>SMS touches</span></div>
+              <div class="map-stat"><strong>2 yrs</strong><span>Timeline</span></div>
+              <div class="map-stat"><strong>40+</strong><span>Campaigns/yr</span></div>
+            </div>
+          </div>
         </div>
-        <div class="lifecycle-feature reveal reveal-delay-2">
-          <div class="lifecycle-feature-icon">◈</div>
-          <h4>Flow View</h4>
-          <p>Process-diagram tiles and arrows showing decision logic, branching, and re-engagement loops.</p>
-        </div>
-        <div class="lifecycle-feature reveal reveal-delay-3">
-          <div class="lifecycle-feature-icon">📬</div>
-          <h4>Email + SMS Detail</h4>
-          <p>Click any touchpoint to see the full message copy, timing logic, and behavioral trigger conditions.</p>
-        </div>
-        <div class="lifecycle-feature reveal reveal-delay-4">
-          <div class="lifecycle-feature-icon">🎛️</div>
-          <h4>Journey Filters</h4>
-          <p>Toggle individual journeys on and off. Isolate win-back, deferred services, or onboarding at a glance.</p>
-        </div>
+
       </div>
     </div>
   </section>
