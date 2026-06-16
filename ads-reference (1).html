@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FullSpeed Automotive Paid Media</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181c27;
+  --surface2: #1e2333;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #e8eaf0;
+  --muted: #7b8399;
+  --faint: #3d4459;
+  --accent: #4f8ef7;
+  --accent-dim: rgba(79,142,247,0.12);
+  --green: #3ecf8e;
+  --green-dim: rgba(62,207,142,0.12);
+  --amber: #f5a623;
+  --amber-dim: rgba(245,166,35,0.12);
+  --red: #e05252;
+  --red-dim: rgba(224,82,82,0.12);
+  --purple: #9b7ff4;
+  --purple-dim: rgba(155,127,244,0.12);
+  --coral: #f07050;
+  --coral-dim: rgba(240,112,80,0.12);
+  --font: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+.app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+.sidebar { background: var(--surface); border-right: 0.5px solid var(--border); padding: 1.5rem 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.main { padding: 2rem; max-width: 980px; }
+.sidebar-logo { padding: 0 1.25rem 1.5rem; border-bottom: 0.5px solid var(--border); margin-bottom: 1rem; }
+.sidebar-logo .brand { font-size: 13px; font-weight: 600; color: var(--text); letter-spacing: 0.02em; }
+.sidebar-logo .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.nav-section { padding: 0 0.75rem; margin-bottom: 0.5rem; }
+.nav-label { font-size: 10px; font-weight: 600; color: var(--faint); letter-spacing: 0.08em; text-transform: uppercase; padding: 0 0.5rem; margin-bottom: 4px; }
+.nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 6px; cursor: pointer; color: var(--muted); font-size: 13px; transition: all 0.15s; border: none; background: none; width: 100%; text-align: left; }
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--accent-dim); color: var(--accent); }
+.nav-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.page-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 0.5px solid var(--border); }
+.page-header h1 { font-size: 22px; font-weight: 600; color: var(--text); }
+.page-header p { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.section { display: none; }
+.section.active { display: block; }
+.section-title { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1rem; margin-top: 1.75rem; }
+.section-title:first-child { margin-top: 0; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+.grid4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 10px; padding: 1.25rem; }
+.card-title { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 1rem; }
+.metric { background: var(--surface2); border-radius: 8px; padding: 1rem; }
+.metric .lbl { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.metric .val { font-size: 22px; font-weight: 600; color: var(--text); }
+.metric .sub { font-size: 11px; color: var(--faint); margin-top: 3px; }
+.bar-item { margin-bottom: 10px; }
+.bar-head { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.bar-track { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 3px; }
+.data-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
+.data-row:last-child { border-bottom: none; }
+.data-row .name { color: var(--text); }
+.data-row .nums { display: flex; gap: 20px; }
+.data-row .num { font-family: var(--mono); font-size: 12px; color: var(--muted); min-width: 80px; text-align: right; }
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; white-space: nowrap; font-family: var(--mono); }
+.b-blue { background: var(--accent-dim); color: var(--accent); }
+.b-green { background: var(--green-dim); color: var(--green); }
+.b-amber { background: var(--amber-dim); color: var(--amber); }
+.b-purple { background: var(--purple-dim); color: var(--purple); }
+.b-coral { background: var(--coral-dim); color: var(--coral); }
+.b-gray { background: rgba(255,255,255,0.05); color: var(--muted); }
+
+/* Capability table */
+.cap-wrap { overflow-x: auto; border: 0.5px solid var(--border); border-radius: 10px; margin-bottom: 1.5rem; }
+.cap-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 640px; }
+.cap-table th { background: var(--surface2); color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 10px 14px; text-align: left; border-bottom: 0.5px solid var(--border); white-space: nowrap; }
+.cap-table td { padding: 9px 14px; border-bottom: 0.5px solid var(--border); color: var(--text); vertical-align: top; }
+.cap-table tr:last-child td { border-bottom: none; }
+.cap-table tr:hover td { background: var(--surface2); }
+.cap-table .channel-name { font-weight: 500; }
+.cap-table .channel-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.yes { color: var(--green); font-weight: 500; font-size: 13px; }
+.no { color: var(--faint); font-size: 13px; }
+.partial { color: var(--amber); font-weight: 500; font-size: 13px; }
+.cell-note { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* Scope cards */
+.info-row { display: flex; gap: 12px; padding: 8px 0; border-bottom: 0.5px solid var(--border); font-size: 13px; }
+.info-row:last-child { border-bottom: none; }
+.info-key { font-weight: 500; color: var(--muted); min-width: 130px; flex-shrink: 0; }
+.info-val { color: var(--text); }
+.pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 0.75rem; }
+
+/* Appendix */
+.app-block { background: var(--surface); border: 0.5px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
+.app-block h3 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 0.5px solid var(--border); }
+.app-block ul { list-style: none; padding: 0; }
+.app-block ul li { font-size: 13px; color: var(--muted); padding: 4px 0; padding-left: 1rem; position: relative; }
+.app-block ul li::before { content: '—'; position: absolute; left: 0; color: var(--faint); }
+.app-block ul li strong { color: var(--text); }
+.app-block .sub-list { margin-left: 1rem; margin-top: 2px; }
+.app-block .sub-list li { color: var(--faint); font-size: 12px; }
+.app-note { font-size: 12px; color: var(--faint); margin-top: 0.75rem; padding-top: 0.75rem; border-top: 0.5px solid var(--border); font-style: italic; }
+
+/* Sidebar footer */
+.sidebar-footer { padding: 1rem 1.25rem; border-top: 0.5px solid var(--border); margin-top: 2rem; }
+.sidebar-footer div { font-size: 11px; color: var(--faint); }
+
+@media (max-width: 700px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; }
+  .main { padding: 1rem; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">FullSpeed Automotive</div>
+    <div class="sub">Paid Media Reference</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Core</div>
+    <button class="nav-item active" onclick="sw('overview')"><span class="nav-dot"></span>Overview</button>
+    <button class="nav-item" onclick="sw('capabilities')"><span class="nav-dot"></span>Capabilities</button>
+    <button class="nav-item" onclick="sw('scope')"><span class="nav-dot"></span>Store vs regional</button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Reference</div>
+    <button class="nav-item" onclick="sw('appendix')"><span class="nav-dot"></span>Appendix</button>
+  </div>
+  <div class="sidebar-footer">
+    <div>Export: June 2026</div>
+    <div>1,580 campaigns · 287 locations</div>
+  </div>
+</aside>
+
+<main class="main">
+
+  <div class="page-header">
+    <h1>FullSpeed Automotive Paid Media</h1>
+    <p>Google Ads reference · Last updated June 2026</p>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="section active" id="tab-overview">
+    <div class="section-title">Account snapshot</div>
+    <div class="grid4">
+      <div class="metric"><div class="lbl">Total campaigns</div><div class="val">1,580</div><div class="sub">287 locations</div></div>
+      <div class="metric"><div class="lbl">Total spend</div><div class="val">$397K</div><div class="sub">Across all types</div></div>
+      <div class="metric"><div class="lbl">Active campaigns</div><div class="val">894</div><div class="sub">619 paused · 63 removed</div></div>
+      <div class="metric"><div class="lbl">Top channel</div><div class="val">Search</div><div class="sub">$191,696 spend</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">Spend by campaign type</div>
+        <div class="bar-item"><div class="bar-head"><span>Search</span><span>$191,696</span></div><div class="bar-track"><div class="bar-fill" style="width:48%;background:var(--accent)"></div></div></div>
+        <div class="bar-item"><div class="bar-head"><span>Performance Max</span><span>$92,298</span></div><div class="bar-track"><div class="bar-fill" style="width:23%;background:var(--green)"></div></div></div>
+        <div class="bar-item"><div class="bar-head"><span>Video (YouTube)</span><span>$72,076</span></div><div class="bar-track"><div class="bar-fill" style="width:18%;background:var(--amber)"></div></div></div>
+        <div class="bar-item"><div class="bar-head"><span>Demand Gen</span><span>$40,968</span></div><div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--purple)"></div></div></div>
+        <div class="bar-item"><div class="bar-head"><span>Display / Local</span><span>$0 (inactive)</span></div><div class="bar-track"><div class="bar-fill" style="width:0%"></div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Spend by segment</div>
+        <div class="bar-item"><div class="bar-head"><span>NonBrand Search</span><span>$171,571</span></div><div class="bar-track"><div class="bar-fill" style="width:43%;background:var(--coral)"></div></div></div>
+        <div class="bar-item"><div class="bar-head"><span>Upper funnel (Video + DGen)</span><span>$112,913</span></div><div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--amber)"></div></div></div>
+        <div class="bar-item"><div class="bar-head"><span>Performance Max</span><span>$91,702</span></div><div class="bar-track"><div class="bar-fill" style="width:23%;background:var(--green)"></div></div></div>
+        <div class="bar-item"><div class="bar-head"><span>Brand Search</span><span>$20,852</span></div><div class="bar-track"><div class="bar-fill" style="width:5%;background:var(--accent)"></div></div></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">Campaign status</div>
+        <div class="data-row"><span class="name"><span class="badge b-green">Eligible</span></span><div class="nums"><span class="num">143</span><span class="num">$155,539</span></div></div>
+        <div class="data-row"><span class="name"><span class="badge b-amber">Eligible (Limited)</span></span><div class="nums"><span class="num">714</span><span class="num">$225,451</span></div></div>
+        <div class="data-row"><span class="name"><span class="badge b-blue">Eligible (Learning)</span></span><div class="nums"><span class="num">37</span><span class="num">$16,048</span></div></div>
+        <div class="data-row"><span class="name"><span class="badge b-gray">Paused</span></span><div class="nums"><span class="num">619</span><span class="num">—</span></div></div>
+        <div class="data-row"><span class="name"><span class="badge b-gray">Removed</span></span><div class="nums"><span class="num">63</span><span class="num">—</span></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Bid strategies</div>
+        <div class="data-row"><span class="name">Target CPA</span><div class="nums"><span class="num">698</span><span class="num">$187,069</span></div></div>
+        <div class="data-row"><span class="name">Maximize Conversions</span><div class="nums"><span class="num">515</span><span class="num">$92,298</span></div></div>
+        <div class="data-row"><span class="name">Target CPM</span><div class="nums"><span class="num">16</span><span class="num">$72,076</span></div></div>
+        <div class="data-row"><span class="name">Maximize Clicks</span><div class="nums"><span class="num">289</span><span class="num">$45,595</span></div></div>
+        <div class="data-row"><span class="name">Manual CPC / Other</span><div class="nums"><span class="num">62</span><span class="num">—</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAPABILITIES -->
+  <div class="section" id="tab-capabilities">
+    <div class="section-title">Channel capabilities by business unit</div>
+    <div class="cap-wrap">
+      <table class="cap-table">
+        <thead><tr>
+          <th style="min-width:200px">Channel / Vendor</th>
+          <th>ROP</th>
+          <th>GM Franchise</th>
+          <th>SD Franchise</th>
+          <th>ADI</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="channel-name">Google Search — Brand</div>
+              <div class="channel-sub">Vendor: L3</div>
+            </td>
+            <td><span class="yes">Yes</span><div class="cell-note">Store level</div></td>
+            <td><span class="yes">Yes</span></td>
+            <td><span class="yes">Yes</span></td>
+            <td><span class="yes">Yes</span><div class="cell-note">Regional · YouTech</div></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="channel-name">Google Search — NonBrand</div>
+              <div class="channel-sub">Vendor: L3</div>
+            </td>
+            <td><span class="yes">Yes</span><div class="cell-note">Store level</div></td>
+            <td><span class="yes">Yes</span></td>
+            <td><span class="yes">Yes</span></td>
+            <td><span class="yes">Yes</span><div class="cell-note">YouTech</div></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="channel-name">Performance Max</div>
+              <div class="channel-sub">Vendor: L3</div>
+            </td>
+            <td><span class="yes">Yes</span><div class="cell-note">Regional for GM · Store level for all other brands</div></td>
+            <td><span class="yes">Yes</span></td>
+            <td><span class="yes">Yes</span></td>
+            <td><span class="yes">Yes</span><div class="cell-note">Regional · YouTech</div></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="channel-name">Demand Gen</div>
+              <div class="channel-sub">Vendor: L3</div>
+            </td>
+            <td><span class="yes">Yes</span><div class="cell-note">Regional for GM · Store level for Growth brands</div></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="channel-name">YouTube / Video</div>
+              <div class="channel-sub">Vendor: L3</div>
+            </td>
+            <td><span class="yes">Yes</span><div class="cell-note">Scope TBD — confirm with L3</div></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="channel-name">iHeart Radio</div>
+              <div class="channel-sub">Vendor: L3</div>
+            </td>
+            <td><span class="partial">Limited</span><div class="cell-note">Salt Lake City only (regional)</div></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="channel-name">CTV</div>
+              <div class="channel-sub">Vendor: MNTN</div>
+            </td>
+            <td><span class="partial">Inactive</span><div class="cell-note">Previously ran in Atlanta region only</div></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="channel-name">Meta (Paid Social)</div>
+              <div class="channel-sub">Vendor: L3</div>
+            </td>
+            <td><span class="partial">Inactive</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="yes">Yes</span><div class="cell-note">YouTech</div></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="channel-name">Programmatic Display</div>
+              <div class="channel-sub">Vendor: L3</div>
+            </td>
+            <td><span class="partial">Inactive</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="channel-name">Direct Mail</div>
+              <div class="channel-sub">Vendor: DripDrop</div>
+            </td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="yes">Yes</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="channel-name">Sports / Event Ads</div>
+              <div class="channel-sub">Vendor: YouTech (Rapids/Avalanche)</div>
+            </td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="yes">Yes</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="channel-name">Regional agencies (other media)</div>
+              <div class="channel-sub">RVPD, Quad, Davis, Mid Atlantic</div>
+            </td>
+            <td><span class="no">No</span></td>
+            <td><span class="no">No</span></td>
+            <td><span class="yes">Yes</span><div class="cell-note">By market</div></td>
+            <td><span class="no">No</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title">Growth brands</div>
+    <div class="card">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:0.5rem">Growth brands receive store-level Demand Gen campaigns in addition to standard Search and PMax.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="badge b-green">Grease Monkey</span>
+        <span class="badge b-green">Uncle Ed's</span>
+        <span class="badge b-green">American Lube Fast</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORE VS REGIONAL -->
+  <div class="section" id="tab-scope">
+    <div class="section-title">How budgets work</div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">Store level campaigns</div>
+        <div class="pill-row"><span class="badge b-blue">Search primary</span><span class="badge b-green">Some PMax</span></div>
+        <div class="info-row"><span class="info-key">How it works</span><span class="info-val">Each store has its own campaign, budget, and geo-targeting around that location</span></div>
+        <div class="info-row"><span class="info-key">CPSV accountability</span><span class="info-val">Clean — spend tied directly to one location</span></div>
+        <div class="info-row"><span class="info-key">Limitation</span><span class="info-val">Small individual budgets can constrain Google's learning algorithm. May cap out mid-day.</span></div>
+        <div class="info-row"><span class="info-key">Naming pattern</span><span class="info-val">GM_NONBRAND-RADIUS-[City, ST]-#[Store]-SEARCH</span></div>
+        <div class="info-row"><span class="info-key">In the data</span><span class="info-val">1,242 campaigns · $232,049 spend</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Regional campaigns</div>
+        <div class="pill-row"><span class="badge b-purple">Pooled budget</span><span class="badge b-green">PMax primary</span><span class="badge b-purple">Demand Gen</span></div>
+        <div class="info-row"><span class="info-key">How it works</span><span class="info-val">One campaign covers a multi-store region. Google allocates budget across the geography.</span></div>
+        <div class="info-row"><span class="info-key">CPSV accountability</span><span class="info-val">Murkier — requires store visit attribution to credit individual locations</span></div>
+        <div class="info-row"><span class="info-key">Advantage</span><span class="info-val">Larger pooled budget = more data = faster machine learning</span></div>
+        <div class="info-row"><span class="info-key">Naming pattern</span><span class="info-val">GM_[TYPE]-RADIUS-REGIONAL-[REGION NAME]-[TYPE]</span></div>
+        <div class="info-row"><span class="info-key">In the data</span><span class="info-val">37 campaigns · $92,913 spend</span></div>
+      </div>
+    </div>
+
+    <div class="section-title">Known regional markets (Google Ads)</div>
+    <div class="card">
+      <div class="data-row"><span class="name" style="font-weight:500">Midwest</span><span style="color:var(--muted)">PMax + Demand Gen · $13,193 PMax spend</span></div>
+      <div class="data-row"><span class="name" style="font-weight:500">Georgia Core</span><span style="color:var(--muted)">PMax + Demand Gen · $11,784 PMax spend</span></div>
+      <div class="data-row"><span class="name" style="font-weight:500">Texas Core</span><span style="color:var(--muted)">PMax + Demand Gen · $11,529 PMax spend · highest conversions</span></div>
+      <div class="data-row"><span class="name" style="font-weight:500">Southeast</span><span style="color:var(--muted)">PMax + Demand Gen · $9,748 PMax spend</span></div>
+      <div class="data-row"><span class="name" style="font-weight:500">Western</span><span style="color:var(--muted)">PMax + Demand Gen · $8,017 PMax spend</span></div>
+      <div class="data-row"><span class="name" style="font-weight:500">ADI (Colorado)</span><span style="color:var(--muted)">Pooled ROP + Franchise · 61% NB / 27% PMax / ~12% Brand / YouTube</span></div>
+    </div>
+  </div>
+
+  <!-- APPENDIX -->
+  <div class="section" id="tab-appendix">
+    <div class="section-title">Business unit detail</div>
+
+    <div class="app-block">
+      <h3>ROP — Corporate-owned locations</h3>
+      <ul>
+        <li><strong>Brands:</strong> Grease Monkey, SpeeDee, Uncle Ed's, American Lube Fast, Kwik Kar, Herbert Automotive, Economy Oil</li>
+        <li><strong>Grease Monkey:</strong> Mix of ROP and franchise — roughly half corporate, half franchisee</li>
+        <li><strong>SpeeDee:</strong> Predominantly franchise with a small number of ROP locations</li>
+        <li><strong>Agency:</strong> L3 for all ROP digital. ADI (YouTech) manages Colorado ROP.</li>
+        <li><strong>Channels:</strong> Full suite — Search (Brand + NonBrand), PMax, Demand Gen, YouTube, iHeart Radio (SLC), CTV via MNTN (inactive), Meta (inactive), Programmatic Display (inactive)</li>
+        <li><strong>Growth brands</strong> (store-level Demand Gen): Grease Monkey, Uncle Ed's, American Lube Fast</li>
+      </ul>
+    </div>
+
+    <div class="app-block">
+      <h3>GM Franchise — Grease Monkey franchisees</h3>
+      <ul>
+        <li><strong>Funding:</strong> NMF (National Marketing Fund) — franchisees contribute ~0.5% of sales</li>
+        <li><strong>Agency:</strong> L3 via NMF program. Fee waived for NMF participants. Franchisees can use own agency but pay NMF contribution and agency fee separately.</li>
+        <li><strong>Channels:</strong> Google only — Search (Brand + NonBrand), PMax. No Demand Gen, no YouTube, no Meta through NMF.</li>
+      </ul>
+      <div class="app-note">NMF rate of ~0.5% of sales is an estimate — confirm with finance team.</div>
+    </div>
+
+    <div class="app-block">
+      <h3>SD Franchise — SpeeDee franchisees</h3>
+      <ul>
+        <li><strong>Funding:</strong> SAF (SpeeDee Ad Fund) — separate from NMF</li>
+        <li><strong>Agency:</strong> L3 for Google. Regional agencies handle other media by market.</li>
+        <li><strong>Google channels:</strong> Search (Brand + NonBrand), PMax only</li>
+        <li><strong>Regional agencies:</strong>
+          <ul class="sub-list">
+            <li>RVPD — Texas / Gulf Coast</li>
+            <li>Quad — NorCal</li>
+            <li>Davis — New England</li>
+            <li>Mid Atlantic — Google only, no agency</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="app-block">
+      <h3>ADI — Colorado pooled market</h3>
+      <ul>
+        <li><strong>What it is:</strong> Pooled advertising district covering both ROP and franchise stores in the Colorado area</li>
+        <li><strong>Agency:</strong> YouTech (separate from L3)</li>
+        <li><strong>Budget split:</strong> 61% NonBrand Search · 27% PMax · ~12% Brand · YouTube (regional)</li>
+        <li><strong>Channels:</strong> Google Search (Brand + NonBrand), PMax, Meta, Direct Mail via DripDrop, Rapids/Avalanche sports ads via YouTech</li>
+      </ul>
+    </div>
+
+    <div class="section-title">Glossary</div>
+    <div class="app-block">
+      <ul>
+        <li><strong>ROP:</strong> Corporate-owned store (Run of Program)</li>
+        <li><strong>Zee / Franchisee:</strong> Independently owned franchise location</li>
+        <li><strong>NMF:</strong> National Marketing Fund — GM franchisee pooled ad contributions (~0.5% of sales)</li>
+        <li><strong>SAF:</strong> SpeeDee Ad Fund — SD franchise equivalent of NMF</li>
+        <li><strong>L3:</strong> Primary digital agency for ROP and NMF franchisees. 11.5% fee for non-NMF stores.</li>
+        <li><strong>ADI:</strong> Colorado pooled ad district — managed by YouTech</li>
+        <li><strong>YouTech:</strong> Agency managing ADI (Colorado) campaigns across Google, Meta, and sports/event placements</li>
+        <li><strong>MNTN:</strong> CTV (connected TV) vendor — previously used in Atlanta region, not currently active</li>
+        <li><strong>DripDrop:</strong> Direct mail vendor used by ADI</li>
+        <li><strong>SEM:</strong> Search Engine Marketing = SEO (organic) + PPC (paid)</li>
+        <li><strong>CPSV:</strong> Cost Per Store Visit — primary metric tying ad spend to physical foot traffic</li>
+        <li><strong>Growth brands:</strong> Grease Monkey, Uncle Ed's, American Lube Fast — receive store-level Demand Gen in addition to standard channels</li>
+        <li><strong>CTV:</strong> Connected TV advertising — video ads served on streaming platforms via MNTN</li>
+      </ul>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<script>
+function sw(name){
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.classList.toggle('active', el.getAttribute('onclick')===`sw('${name}')`);
+  });
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+</script>
+</body>
+</html>
